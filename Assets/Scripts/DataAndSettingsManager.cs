@@ -28,23 +28,13 @@ public class DataAndSettingsManager : MonoBehaviour {
     /*private static readonly string PATH_CUSTOM_COLOR_SCHEME_FILE = "playercustomcs.s3d";*/
     ///<summary>The key for smooth movement persistent on/off state, stored by PlayerPrefs.</summary>
     private static readonly string KEY_SMOOTH_MOVEMENT = "smooth";
-    ///<summary>The key for sound effects persistent on/off state, stored by PlayerPrefs.</summary>
-    private static readonly string KEY_SOUND_EFFECTS = "sounds";
     ///<summary>The key for music persistent on/off state, stored by PlayerPrefs.</summary>
     private static readonly string KEY_MUSIC = "music";
+    ///<summary>The key for sound effects persistent on/off state, stored by PlayerPrefs.</summary>
+    private static readonly string KEY_SOUND_EFFECTS = "sounds";
 
     public delegate void SetColorblindMode(bool isOn);
     public static event SetColorblindMode OnToggleColorblindMode;
-
-    /* * * * Lifecycle methods * * * */
-
-    // Start is called before the first frame update
-    void Start() {
-    }
-
-    // Update is called once per frame
-    void Update() {
-    }
 
     /* * * * Public getters and setters * * * */
 
@@ -74,6 +64,12 @@ public class DataAndSettingsManager : MonoBehaviour {
 
     public static bool getSmoothMovementState() { return retrieveBool(KEY_SMOOTH_MOVEMENT, true); }
     public static void setSmoothMovementState(bool isOn) { saveBool(KEY_SMOOTH_MOVEMENT, isOn); }
+
+    public static bool getMusicEnabledState() { return retrieveBool(KEY_MUSIC, true); }
+    public static void setMusicEnabledState(bool isOn) { saveBool(KEY_MUSIC, isOn); }
+
+    public static bool getSoundsEnabledState() { return retrieveBool(KEY_SOUND_EFFECTS, true); }
+    public static void setSoundsEnabledState(bool isOn) { saveBool(KEY_SOUND_EFFECTS, isOn); }
 
     public static int getNumBoughtForStoreItem(string name) { return retrieveInt(name, 0); }
     public static void setNumBoughtForStoreItem(string name, int value) { saveInt(name, value); }

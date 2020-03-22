@@ -10,6 +10,8 @@ public class SettingsMenu : MonoBehaviour {
     public Text colorSchemeLabel;
     public GameObject colorSchemePanel;
     public Toggle smoothMovementToggle;
+    public Toggle musicToggle;
+    public Toggle soundsToggle;
 
     // Start is called before the first frame update
     void Start() {
@@ -23,6 +25,8 @@ public class SettingsMenu : MonoBehaviour {
         this.closeColorSchemeListAction(); // switch to the correct panel
         this.colorblindModeToggle.isOn = DataAndSettingsManager.getColorblindModeState();
         this.smoothMovementToggle.isOn = DataAndSettingsManager.getSmoothMovementState();
+        this.musicToggle.isOn = DataAndSettingsManager.getMusicEnabledState();
+        this.soundsToggle.isOn = DataAndSettingsManager.getSoundsEnabledState();
     }
 
     /* * * * UI actions * * * */
@@ -49,14 +53,16 @@ public class SettingsMenu : MonoBehaviour {
         DataAndSettingsManager.setSmoothMovementState(this.smoothMovementToggle.isOn);
     }
 
-    ///<summary>This method is linked to the Sound Effects settings toggle.</summary>
-    public void toggleSoundEffectsAction() {
-        //
-    }
-
     ///<summary>This method is linked to the Music settings toggle.</summary>
     public void toggleMusicAction() {
-        //
+        DataAndSettingsManager.setMusicEnabledState(this.musicToggle.isOn);
+        AudioManager.setMusicEnabled(this.musicToggle.isOn);
+    }
+
+    ///<summary>This method is linked to the Sound Effects settings toggle.</summary>
+    public void toggleSoundEffectsAction() {
+        DataAndSettingsManager.setSoundsEnabledState(this.soundsToggle.isOn);
+        AudioManager.setSoundsEnabled(this.soundsToggle.isOn);
     }
 
     /* * * * Helper methods * * * */

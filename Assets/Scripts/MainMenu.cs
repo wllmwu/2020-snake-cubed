@@ -33,6 +33,7 @@ public class MainMenu : MonoBehaviour {
         this.openMainAction(); // switch to main panel
         this.updateStatsMenu();
         StartCoroutine("generateMenuCubes");
+        FindObjectOfType<AudioManager>().playMusic(AudioManager.SOUND_MENU_MUSIC);
     }
 
     // Update is called once per frame
