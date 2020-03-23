@@ -4,17 +4,19 @@ using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour {
 
-    public static readonly string SOUND_MENU_MUSIC = "menu";
-    public static readonly string SOUND_BACKGROUND_MUSIC = "background";
+    public static readonly string MUSIC_MENU = "menu";
+    public static readonly string MUSIC_BACKGROUND = "background";
     public static readonly string SOUND_BUTTON = "button";
     public static readonly string SOUND_APPLE = "apple";
     public static readonly string SOUND_GOLD = "gold";
     public static readonly string SOUND_BAD = "bad";
 
     public Sound[] sounds;
+    public bool isOnMenu;
 
     private static bool musicEnabled;
     private static bool soundsEnabled;
+    private static AudioManager instance;
 
     void Awake() {
         foreach (Sound s in sounds) {
@@ -25,16 +27,31 @@ public class AudioManager : MonoBehaviour {
         }
         musicEnabled = DataAndSettingsManager.getMusicEnabledState();
         soundsEnabled = DataAndSettingsManager.getSoundsEnabledState();
+        instance = this;
     }
 
     /* * * * Public methods * * * */
 
     public static void setMusicEnabled(bool isEnabled) {
         musicEnabled = isEnabled;
-        // TODO: start or stop music depending on setting.
-        // Array.Find the Sound with the name, do sound.source.Stop();
-        // or start it
-        // probably need to have a flag for which scene we are currently in so we know which music to start
+        if (isEnabled) {
+            // start music
+            if (instance.isOnMenu) {
+                instance.playAudio(MUSIC_MENU);
+            }
+            else {
+                instance.playAudio(MUSIC_BACKGROUND);
+            }
+        }
+        else {
+            // stop music
+            if (instance.isOnMenu) {
+                Array.Find(instance.sounds, sound => sound.name == MUSIC_MENU).source.Stop();
+            }
+            else {
+                Array.Find(instance.sounds, sound => sound.name == MUSIC_BACKGROUND).source.Stop();
+            }
+        }
     }
 
     public static void setSoundsEnabled(bool isEnabled) {
