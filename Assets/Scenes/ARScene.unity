@@ -3793,6 +3793,7 @@ MonoBehaviour:
   scoreLabel: {fileID: 1097001863}
   goldLabel: {fileID: 602089135}
   directionCube: {fileID: 40432994}
+  audioManager: {fileID: 1847556564}
 --- !u!114 &857179776
 MonoBehaviour:
   m_ObjectHideFlags: 0

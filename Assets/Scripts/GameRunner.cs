@@ -33,7 +33,7 @@ public class GameRunner : StateChangeListener {
     private int score;
     private int goldAmount;
     private bool isHardMode;
-    private static readonly float DEFAULT_TIME_INTERVAL = 0.6f; //0.35f;
+    private static readonly float DEFAULT_TIME_INTERVAL = 0.6f; //0.45f;
     private static readonly float SLOW_TIME_INTERVAL = 0.6f;
     private static readonly float FAST_TIME_INTERVAL = 0.25f;
     private float timeInterval;
@@ -50,6 +50,7 @@ public class GameRunner : StateChangeListener {
     public Text scoreLabel;
     public Text goldLabel;
     public DirectionCube directionCube;
+    public AudioManager audioManager;
 
     /* * * * Lifecycle methods * * * */
 
@@ -420,13 +421,16 @@ public class GameRunner : StateChangeListener {
     private void showPointsFeedback(Vector3 position, int type) {
         if (type == SPACE_APPLE) {
             StartCoroutine("animatePointsFeedback", Instantiate(this.plus1Prefab, position, new Quaternion()));
+            this.audioManager.playSound(AudioManager.SOUND_APPLE);
         }
         else if (type == SPACE_GOLD) {
             StartCoroutine("animatePointsFeedback", Instantiate(this.plus3Prefab, position, new Quaternion()));
             StartCoroutine("animatePointsFeedback", Instantiate(this.plusGoldPrefab, position + new Vector3(0f, -0.1f, 0f), new Quaternion()));
+            this.audioManager.playSound(AudioManager.SOUND_GOLD);
         }
         else if (type == SPACE_BAD) {
             StartCoroutine("animatePointsFeedback", Instantiate(this.minus2Prefab, position, new Quaternion()));
+            this.audioManager.playSound(AudioManager.SOUND_BAD);
         }
     }
 

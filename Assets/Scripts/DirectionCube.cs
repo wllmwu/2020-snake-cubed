@@ -62,7 +62,7 @@ public class DirectionCube : MonoBehaviour {
         float negXposZAngle = Swipes.angleBetweenPoints(centerScreenPoint, negXposZScreenPoint);
         float negXnegZAngle = Swipes.angleBetweenPoints(centerScreenPoint, negXnegZScreenPoint);
         float posXnegZAngle = Swipes.angleBetweenPoints(centerScreenPoint, posXnegZScreenPoint);
-        Debug.Log("+x+z: " + posXposZAngle + ", -x+z: " + negXposZAngle + ", -x-z: " + negXnegZAngle + ", +x-z: " + posXnegZAngle);
+        //Debug.Log("+x+z: " + posXposZAngle + ", -x+z: " + negXposZAngle + ", -x-z: " + negXnegZAngle + ", +x-z: " + posXnegZAngle);
         if (this.angleIsInRange(swipeAngle, posXposZAngle, negXposZAngle)) {
             return Snake.DIRECTION_POS_Z;
         }

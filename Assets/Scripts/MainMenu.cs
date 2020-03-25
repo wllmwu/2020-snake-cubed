@@ -25,6 +25,8 @@ public class MainMenu : MonoBehaviour {
 
     public GameObject crownImage;
 
+    /* TODO: credits panel */
+
     /* * * * Lifecycle methods * * * */
 
     // Start is called before the first frame update

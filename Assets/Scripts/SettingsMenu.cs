@@ -56,13 +56,13 @@ public class SettingsMenu : MonoBehaviour {
     ///<summary>This method is linked to the Music settings toggle.</summary>
     public void toggleMusicAction() {
         DataAndSettingsManager.setMusicEnabledState(this.musicToggle.isOn);
-        AudioManager.setMusicEnabled(this.musicToggle.isOn);
+        FindObjectOfType<AudioManager>().setMusicEnabled(this.musicToggle.isOn);
     }
 
     ///<summary>This method is linked to the Sound Effects settings toggle.</summary>
     public void toggleSoundEffectsAction() {
         DataAndSettingsManager.setSoundsEnabledState(this.soundsToggle.isOn);
-        AudioManager.setSoundsEnabled(this.soundsToggle.isOn);
+        FindObjectOfType<AudioManager>().setSoundsEnabled(this.soundsToggle.isOn);
     }
 
     /* * * * Helper methods * * * */

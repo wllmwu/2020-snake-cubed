@@ -14,9 +14,8 @@ public class AudioManager : MonoBehaviour {
     public Sound[] sounds;
     public bool isOnMenu;
 
-    private static bool musicEnabled;
-    private static bool soundsEnabled;
-    private static AudioManager instance;
+    private bool musicEnabled;
+    private bool soundsEnabled;
 
     void Awake() {
         foreach (Sound s in sounds) {
@@ -25,37 +24,36 @@ public class AudioManager : MonoBehaviour {
             s.source.volume = s.volume;
             s.source.loop = s.loop;
         }
-        musicEnabled = DataAndSettingsManager.getMusicEnabledState();
-        soundsEnabled = DataAndSettingsManager.getSoundsEnabledState();
-        instance = this;
+        this.musicEnabled = DataAndSettingsManager.getMusicEnabledState();
+        this.soundsEnabled = DataAndSettingsManager.getSoundsEnabledState();
     }
 
     /* * * * Public methods * * * */
 
-    public static void setMusicEnabled(bool isEnabled) {
-        musicEnabled = isEnabled;
+    public void setMusicEnabled(bool isEnabled) {
+        this.musicEnabled = isEnabled;
         if (isEnabled) {
             // start music
-            if (instance.isOnMenu) {
-                instance.playAudio(MUSIC_MENU);
+            if (this.isOnMenu) {
+                this.playAudio(MUSIC_MENU);
             }
             else {
-                instance.playAudio(MUSIC_BACKGROUND);
+                this.playAudio(MUSIC_BACKGROUND);
             }
         }
         else {
             // stop music
-            if (instance.isOnMenu) {
-                Array.Find(instance.sounds, sound => sound.name == MUSIC_MENU).source.Stop();
+            if (this.isOnMenu) {
+                Array.Find(this.sounds, sound => sound.name == MUSIC_MENU).source.Stop();
             }
             else {
-                Array.Find(instance.sounds, sound => sound.name == MUSIC_BACKGROUND).source.Stop();
+                Array.Find(this.sounds, sound => sound.name == MUSIC_BACKGROUND).source.Stop();
             }
         }
     }
 
-    public static void setSoundsEnabled(bool isEnabled) {
-        soundsEnabled = isEnabled;
+    public void setSoundsEnabled(bool isEnabled) {
+        this.soundsEnabled = isEnabled;
     }
 
     public void playMusic(string name) {

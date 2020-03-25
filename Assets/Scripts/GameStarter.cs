@@ -28,6 +28,7 @@ public class GameStarter : StateChangeListener {
 
     // Start is called before the first frame update
     void Start() {
+        FindObjectOfType<AudioManager>().playMusic(AudioManager.MUSIC_BACKGROUND);
     }
 
     void OnEnable() {
