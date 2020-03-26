@@ -71,6 +71,7 @@ public class ColorSchemePickerListItem : MonoBehaviour {
         this.setSelected(true);
         ColorSchemesManager.setColorScheme(this.colorSchemeID);
         DataAndSettingsManager.setColorSchemeID(this.colorSchemeID);
+        FindObjectOfType<AudioManager>().playButtonSound();
     }
 
     ///<summary>The delegate method for OnSelectColorScheme.</summary>
