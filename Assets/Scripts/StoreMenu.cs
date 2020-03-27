@@ -23,8 +23,7 @@ public class StoreMenu : MonoBehaviour {
     }
 
     /* TEMPORARY METHODS */
-
-    public void addGold() {
+    /*public void addGold() {
         DataAndSettingsManager.setGoldAmount(DataAndSettingsManager.getGoldAmount() + 100);
         this.updateGoldLabel();
     }
@@ -32,7 +31,7 @@ public class StoreMenu : MonoBehaviour {
     public void subtractGold() {
         DataAndSettingsManager.setGoldAmount(DataAndSettingsManager.getGoldAmount() - 1);
         this.updateGoldLabel();
-    }
+    }*/
 
     /* * * * Helper methods * * * */
 
