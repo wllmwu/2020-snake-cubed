@@ -16,6 +16,7 @@ public class MainMenu : MonoBehaviour {
     public Text resetAverageButtonLabel;
     public StoreMenu storePanel;
     public GameObject settingsPanel;
+    public GameObject aboutPanel;
 
     public GameObject menuCubePrefab;
     private List<GameObject> menuCubes;
@@ -24,8 +25,6 @@ public class MainMenu : MonoBehaviour {
     private static readonly float timeInterval = 0.4f;
 
     public GameObject crownImage;
-
-    /* TODO: credits panel */
 
     /* * * * Lifecycle methods * * * */
 
@@ -80,6 +79,15 @@ public class MainMenu : MonoBehaviour {
         this.settingsPanel.SetActive(true);
     }
 
+    public void openAboutAction() {
+        this.deactivateAllPanels();
+        this.aboutPanel.SetActive(true);
+    }
+
+    public void visitMusicLinkAction() {
+        Application.OpenURL("https://www.zapsplat.com/");
+    }
+
     /* * * * Animated background cubes * * * */
 
     ///<summary>Instantiates a new menu cube at a random placement along the starting line every `this.timeInterval` seconds.</summary>
@@ -127,6 +135,7 @@ public class MainMenu : MonoBehaviour {
         this.statsPanel.SetActive(false);
         this.storePanel.gameObject.SetActive(false);
         this.settingsPanel.SetActive(false);
+        this.aboutPanel.SetActive(false);
     }
 
     private void updateStatsMenu() {

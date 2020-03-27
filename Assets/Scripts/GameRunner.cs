@@ -303,7 +303,6 @@ public class GameRunner : StateChangeListener {
         }
     }
 
-    // TODO: make a list for bad Cube objects, redo this method to add a new bad Cube to the list and generate/destroy it, destroy all the cubes in the list in the destroy method
     private IEnumerator randomlyGenerateBad(Cube bad) {
         // bad appears and disappears after random time intervals
         while (true) { // will run until coroutine is stopped
