@@ -492,7 +492,7 @@ PrefabInstance:
     - target: {fileID: 3873034495079615916, guid: 53720f98ae652426ba01587e926297f1,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 29
+      value: 28.985508
       objectReference: {fileID: 0}
     - target: {fileID: 3873034495079615916, guid: 53720f98ae652426ba01587e926297f1,
         type: 3}
@@ -670,11 +670,11 @@ MonoBehaviour:
   m_Script: {fileID: 1980459831, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
-  m_ScreenMatchMode: 0
+  m_ReferenceResolution: {x: 750, y: 1334}
+  m_ScreenMatchMode: 1
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
@@ -929,7 +929,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 60}
+  m_AnchoredPosition: {x: 0, y: 50}
   m_SizeDelta: {x: 500, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &449619662
@@ -1618,7 +1618,7 @@ PrefabInstance:
     - target: {fileID: 3873034495079615916, guid: 53720f98ae652426ba01587e926297f1,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 29
+      value: 28.985508
       objectReference: {fileID: 0}
     - target: {fileID: 3873034495079615916, guid: 53720f98ae652426ba01587e926297f1,
         type: 3}
@@ -1717,7 +1717,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: -574}
+  m_SizeDelta: {x: 0, y: -863.1885}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &646660440
 MonoBehaviour:
@@ -4697,7 +4697,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 60, y: 540}
+  m_AnchoredPosition: {x: 60, y: 538}
   m_SizeDelta: {x: 80, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1909681410
