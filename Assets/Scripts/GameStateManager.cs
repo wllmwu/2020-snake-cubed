@@ -30,6 +30,7 @@ public class GameStateManager : MonoBehaviour {
         gameRunner = GetComponent<GameRunner>();
         gameEnder = GetComponent<GameEnder>();
         ColorSchemesManager.setColorScheme(DataAndSettingsManager.getColorSchemeID());
+        gameEnder.loadInterstitial();
         onInitialize();
     }
 

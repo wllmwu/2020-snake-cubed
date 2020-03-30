@@ -44,10 +44,10 @@ public class AudioManager : MonoBehaviour {
         else {
             // stop music
             if (this.isOnMenu) {
-                Array.Find(this.sounds, sound => sound.name == MUSIC_MENU).source.Stop();
+                this.findSound(MUSIC_MENU).source.Stop();
             }
             else {
-                Array.Find(this.sounds, sound => sound.name == MUSIC_BACKGROUND).source.Stop();
+                this.findSound(MUSIC_BACKGROUND).source.Stop();
             }
         }
     }
@@ -72,15 +72,23 @@ public class AudioManager : MonoBehaviour {
         this.playSound(SOUND_BUTTON);
     }
 
+    public void pauseMusic(string name) {
+        this.findSound(name).source.Pause();
+    }
+
     /* * * * Private methods * * * */
 
     private void playAudio(string name) {
-        Sound s = Array.Find(sounds, sound => sound.name == name);
+        Sound s = this.findSound(name);
         if (s == null) {
             Debug.LogWarning("Sound \"" + name + "\" doesn't exist");
             return;
         }
         s.source.Play();
+    }
+
+    private Sound findSound(string name) {
+        return Array.Find(this.sounds, sound => sound.name == name);
     }
 
 }

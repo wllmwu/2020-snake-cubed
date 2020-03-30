@@ -28,7 +28,7 @@ public class StoreManager : MonoBehaviour {
         new StoreItem(ITEM_NAME_COLORS_WAR_COO, 60, "Find these new color schemes in Settings."),
         new StoreItem(ITEM_NAME_COLORS_MID_WHI, 60, "Find these new color schemes in Settings."),
         new StoreItem(ITEM_NAME_COLORS_RGB_CMY, 60, "Find these new color schemes in Settings."),
-        new StoreItem(ITEM_NAME_BRAGGING_RIGHTS, 500, "Brag anywhere.")
+        new StoreItem(ITEM_NAME_BRAGGING_RIGHTS, 500, "Brag anywhere (unlocks a secret).")
     };
     private static readonly int numExpendables = 2;
 

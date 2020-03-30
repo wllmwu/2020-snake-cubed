@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using GoogleMobileAds.Api;
 
 public class MainMenu : MonoBehaviour {
 
@@ -35,6 +36,7 @@ public class MainMenu : MonoBehaviour {
         this.updateStatsMenu();
         StartCoroutine("generateMenuCubes");
         FindObjectOfType<AudioManager>().playMusic(AudioManager.MUSIC_MENU);
+        MobileAds.Initialize(initStatus => {});
     }
 
     // Update is called once per frame
