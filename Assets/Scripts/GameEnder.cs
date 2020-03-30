@@ -23,6 +23,8 @@ public class GameEnder : StateChangeListener {
     public AudioManager audioManager;
 
     private InterstitialAd interstitialAd;
+    private RewardedAd rewardedAd;
+    private bool shouldReviveFromAd;
 
     /* * * * StateChangeListener delegate * * * */
 
@@ -42,13 +44,14 @@ public class GameEnder : StateChangeListener {
     /* * * * UI actions * * * */
 
     public void reviveAction() {
-        this.consecutiveRounds++;
-        GameStateManager.onGameRevive();
         StoreManager.expendItem(StoreManager.ITEM_NAME_EXTRA_LIFE);
+        this.reviveGame();
     }
 
     public void reviveWithAdAction() {
-        //
+        if (this.rewardedAd.IsLoaded()) {
+            this.rewardedAd.Show();
+        }
     }
 
     ///<summary>Restart the game from the game over screen. This method is linked to a button on the canvas.</summary>
@@ -69,7 +72,7 @@ public class GameEnder : StateChangeListener {
         this.saveData();
         this.displayData();
         this.showReviveButtonIfNecessary();
-        this.showInterstitialIfNecessary();
+        this.showInterstitialAdIfNecessary();
     }
 
     private void saveData() {
@@ -105,18 +108,23 @@ public class GameEnder : StateChangeListener {
         this.reviveButton.SetActive(revivesLeft > 0 && GameStateManager.canRevive());
     }
 
-    private void showInterstitialIfNecessary() {
+    private void showInterstitialAdIfNecessary() {
         if (this.consecutiveRounds % 2 == 1 && this.interstitialAd.IsLoaded()) { // show an ad every other round
             this.interstitialAd.Show();
         }
     }
 
+    private void reviveGame() {
+        this.consecutiveRounds++;
+        GameStateManager.onGameRevive();
+    }
+
     /* * * * Advertisements * * * */
 
-    public void loadInterstitial() {
+    public void loadInterstitialAd() {
         #if UNITY_ANDROID
             string adUnitID = "ca-app-pub-3940256099942544/1033173712";
-        #elif UNITY_IPHONE
+        #elif UNITY_IOS
             string adUnitID = "ca-app-pub-3940256099942544/4411468910"; // TODO: change unit ids
         #else
             string adUnitID = "unexpected_platform";
@@ -126,17 +134,62 @@ public class GameEnder : StateChangeListener {
         this.interstitialAd.LoadAd(request);
 
         // subscribe to event handlers that will pause/resume music
-        this.interstitialAd.OnAdOpening += this.handleAdShown;
-        this.interstitialAd.OnAdClosed += this.handleAdClosed;
+        this.interstitialAd.OnAdOpening += this.handleInterstitialAdShown;
+        this.interstitialAd.OnAdClosed += this.handleInterstitialAdClosed;
     }
 
-    public void handleAdShown(object sender, EventArgs args) {
+    public void handleInterstitialAdShown(object sender, EventArgs args) {
+        this.pauseMusic();
+    }
+
+    public void handleInterstitialAdClosed(object sender, EventArgs args) {
+        this.resumeMusic();
+        this.loadInterstitialAd();
+    }
+
+    public void loadRewardedAd() {
+        #if UNITY_ANDROID
+            string adUnitID = "ca-app-pub-3940256099942544/5224354917";
+        #elif UNITY_IOS
+            string adUnitID = "ca-app-pub-3940256099942544/1712485313"; // TODO: change unit ids
+        #else
+            string adUnitID = "unexpected_platform";
+        #endif
+        this.rewardedAd = new RewardedAd(adUnitID);
+        AdRequest request = new AdRequest.Builder().Build();
+        this.rewardedAd.LoadAd(request);
+
+        // subscribe to event handlers that will pause/resume music and revive
+        this.rewardedAd.OnAdOpening += this.handleRewardedAdShown;
+        this.rewardedAd.OnUserEarnedReward += this.handleRewardedAdEarnedReward;
+        this.rewardedAd.OnAdClosed += this.handleRewardedAdClosed;
+    }
+
+    public void handleRewardedAdShown(object sender, EventArgs args) {
+        this.pauseMusic();
+    }
+
+    public void handleRewardedAdEarnedReward(object sender, Reward args) {
+        this.shouldReviveFromAd = true;
+    }
+
+    public void handleRewardedAdClosed(object sender, EventArgs args) {
+        this.resumeMusic();
+        if (this.shouldReviveFromAd) {
+            this.reviveGame();
+        }
+        this.shouldReviveFromAd = false;
+        this.loadRewardedAd();
+    }
+
+    /* * * * Helper methods * * * */
+
+    private void pauseMusic() {
         this.audioManager.pauseMusic(AudioManager.MUSIC_BACKGROUND);
     }
 
-    public void handleAdClosed(object sender, EventArgs args) {
+    private void resumeMusic() {
         this.audioManager.playMusic(AudioManager.MUSIC_BACKGROUND);
-        this.loadInterstitial();
     }
 
 }
