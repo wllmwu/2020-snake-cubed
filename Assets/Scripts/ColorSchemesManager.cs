@@ -206,12 +206,12 @@ public class ColorScheme {
 
     ///<summary>Sets the albedo colors of the given materials to the colors specified in this `ColorScheme`.</summary>
     public void changeMaterialColors(Material bounds, Material snake, Material apple, Material gold, Material bad) {
-        if (bounds == null) {
-            Debug.Log("bounds null");
+        /*if (bounds == null) {
+            //Debug.Log("bounds null");
         }
         if (this.boundsColor == null) {
-            Debug.Log("boundsColor null");
-        }
+            //Debug.Log("boundsColor null");
+        }*/
         bounds.SetColor("_Color", this.boundsColor);
         snake.SetColor("_Color", this.snakeColor);
         apple.SetColor("_Color", this.appleColor);

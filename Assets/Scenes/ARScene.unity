@@ -3805,6 +3805,7 @@ MonoBehaviour:
   endGoldLabel: {fileID: 154739172}
   reviveButton: {fileID: 962001936}
   reviveButtonLabel: {fileID: 2081853572}
+  reviveWithAdButton: {fileID: 1671661489}
   audioManager: {fileID: 1847556564}
 --- !u!1 &863564577
 GameObject:
@@ -4729,7 +4730,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Revive (\u25B6\uFE0E)"
+  m_Text: "Revive (\u25B6)\x03"
 --- !u!222 &1077894191
 CanvasRenderer:
   m_ObjectHideFlags: 0
