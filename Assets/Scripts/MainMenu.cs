@@ -55,6 +55,7 @@ public class MainMenu : MonoBehaviour {
         this.deactivateAllPanels();
         this.crownImage.SetActive(DataAndSettingsManager.getNumBoughtForStoreItem(StoreManager.ITEM_NAME_BRAGGING_RIGHTS) > 0);
         this.mainPanel.SetActive(true);
+        StoreManager.checkNoAdsTime();
     }
 
     ///<summary>This method is linked to the Stats button on the canvas.</summary>
