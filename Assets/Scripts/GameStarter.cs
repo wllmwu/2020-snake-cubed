@@ -56,7 +56,7 @@ public class GameStarter : StateChangeListener {
     /* * * * UI setup * * * */
 
     private void showHardModeToggleIfNecessary() {
-        this.hardModeRect.SetActive(DataAndSettingsManager.getNumBoughtForStoreItem(StoreManager.ITEM_NAME_HARD_MODE) > 0);
+        this.hardModeRect.SetActive(DataAndSettingsManager.getNumBoughtForStoreItem(StoreManager.ITEM_KEY_HARD_MODE) > 0);
         this.hardModeToggle.isOn = DataAndSettingsManager.getHardModeState();
         if (this.hardModeRect.activeSelf) {
             this.helpText.anchoredPosition = new Vector2(0f, 400f);

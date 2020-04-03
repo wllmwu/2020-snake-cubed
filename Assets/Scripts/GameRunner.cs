@@ -34,7 +34,7 @@ public class GameRunner : StateChangeListener {
     private int goldAmount;
     private bool isHardMode;
     private static readonly float DEFAULT_TIME_INTERVAL = 0.45f;
-    private static readonly float SLOW_TIME_INTERVAL = 0.6f;
+    private static readonly float SLOW_TIME_INTERVAL = 1f;
     private static readonly float FAST_TIME_INTERVAL = 0.25f;
     private float timeInterval;
     private int numBads;
@@ -226,6 +226,7 @@ public class GameRunner : StateChangeListener {
     }
 
     public void reviveGame() {
+        //Debug.Log("revive game");
         this.removeGold();
         foreach (Cube bad in this.bads) {
             this.removeBad(bad);

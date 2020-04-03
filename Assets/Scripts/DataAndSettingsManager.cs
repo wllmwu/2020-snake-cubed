@@ -1,37 +1,38 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.IO;
+//using System.Runtime.Serialization.Formatters.Binary;
+//using System.IO;
 
 public class DataAndSettingsManager : MonoBehaviour {
 
     /* * * * Keys for player data * * * */
 
     ///<summary>The key for the highscore, stored by PlayerPrefs.</summary>
-    private static readonly string KEY_HIGHSCORE = "highscore";
+    private static readonly string KEY_HIGHSCORE = "stats.highscore";
     ///<summary>The key for the average score, stored by PlayerPrefs.</summary>
-    private static readonly string KEY_AVERAGE_SCORE = "average";
+    private static readonly string KEY_AVERAGE_SCORE = "stats.average";
     ///<summary>The key for the number of games stored, by PlayerPrefs.</summary>
-    private static readonly string KEY_GAMES_PLAYED = "games";
+    private static readonly string KEY_GAMES_PLAYED = "stats.games";
     ///<summary>The key for the amount of gold, stored by PlayerPrefs.</summary>
-    private static readonly string KEY_GOLD_AMOUNT = "gold";
+    private static readonly string KEY_GOLD_AMOUNT = "stats.gold";
 
     /* * * * Keys for player settings * * * */
 
     ///<summary>The key for hard mode state, stored by PlayerPrefs.</summary>
-    private static readonly string KEY_HARD_MODE = "hardmode";
+    private static readonly string KEY_HARD_MODE = "settings.hardmode";
     ///<summary>The key for colorblind mode persistent on/off state, stored by PlayerPrefs.</summary>
-    private static readonly string KEY_COLORBLIND_MODE = "colorblind";
+    private static readonly string KEY_COLORBLIND_MODE = "settings.colorblind";
     ///<summary>The key for the current color scheme ID, stored by PlayerPrefs.</summary>
-    private static readonly string KEY_COLOR_SCHEME_ID = "colorscheme";
+    private static readonly string KEY_COLOR_SCHEME_ID = "settings.colorscheme";
     /*private static readonly string PATH_CUSTOM_COLOR_SCHEME_FILE = "playercustomcs.s3d";*/
     ///<summary>The key for smooth movement persistent on/off state, stored by PlayerPrefs.</summary>
-    private static readonly string KEY_SMOOTH_MOVEMENT = "smooth";
+    private static readonly string KEY_SMOOTH_MOVEMENT = "settings.smooth";
     ///<summary>The key for music persistent on/off state, stored by PlayerPrefs.</summary>
-    private static readonly string KEY_MUSIC = "music";
+    private static readonly string KEY_MUSIC = "settings.music";
     ///<summary>The key for sound effects persistent on/off state, stored by PlayerPrefs.</summary>
-    private static readonly string KEY_SOUND_EFFECTS = "sounds";
+    private static readonly string KEY_SOUND_EFFECTS = "settings.sounds";
 
     public delegate void SetColorblindMode(bool isOn);
     public static event SetColorblindMode OnToggleColorblindMode;
@@ -71,8 +72,15 @@ public class DataAndSettingsManager : MonoBehaviour {
     public static bool getSoundsEnabledState() { return retrieveBool(KEY_SOUND_EFFECTS, true); }
     public static void setSoundsEnabledState(bool isOn) { saveBool(KEY_SOUND_EFFECTS, isOn); }
 
-    public static int getNumBoughtForStoreItem(string name) { return retrieveInt(name, 0); }
-    public static void setNumBoughtForStoreItem(string name, int value) { saveInt(name, value); }
+    public static int getNumBoughtForStoreItem(string itemKey) { return retrieveInt(itemKey, 0); }
+    public static void setNumBoughtForStoreItem(string itemKey, int numBought) { saveInt(itemKey, numBought); }
+
+    public static DateTime getExpirationDateForStoreItem(string itemKey) {
+        return retrieveDate(itemKey + ".expire");
+    }
+    public static void setExpirationDateForStoreItem(string itemKey, DateTime date) {
+        saveDate(itemKey + ".expire", date);
+    }
 
     /* * * * Public methods * * * */
 
@@ -145,6 +153,23 @@ public class DataAndSettingsManager : MonoBehaviour {
     }
     private static void saveBool(string key, bool value) {
         PlayerPrefs.SetInt(key, value ? 1 : 0);
+    }
+
+    private static DateTime retrieveDate(string key) {
+        string time = retrieveString(key, "");
+        DateTime result;
+        DateTime.TryParse(time, out result); // result is equal to DateTime.MinValue if the conversion fails
+        return result;
+    }
+    private static void saveDate(string key, DateTime value) {
+        saveString(key, value.ToString("yyyy-MM-dd HH:mm:ss"));
+    }
+
+    private static string retrieveString(string key, string defaultValue) {
+        return PlayerPrefs.GetString(key, defaultValue);
+    }
+    private static void saveString(string key, string value) {
+        PlayerPrefs.SetString(key, value);
     }
 
 }
