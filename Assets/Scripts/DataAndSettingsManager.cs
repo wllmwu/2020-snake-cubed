@@ -75,13 +75,6 @@ public class DataAndSettingsManager : MonoBehaviour {
     public static int getNumBoughtForStoreItem(string itemKey) { return retrieveInt(itemKey, 0); }
     public static void setNumBoughtForStoreItem(string itemKey, int numBought) { saveInt(itemKey, numBought); }
 
-    /*public static DateTime getPurchaseDateForStoreItem(string name) {
-        return retrieveDate("store.buy." + name);
-    }
-    public static void setPurchaseDateForStoreItem(string name, DateTime date) {
-        saveDate("store.buy" + name, date);
-    }*/
-
     public static DateTime getExpirationDateForStoreItem(string itemKey) {
         return retrieveDate(itemKey + ".expire");
     }

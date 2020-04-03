@@ -55,18 +55,6 @@ public class StoreManager : MonoBehaviour {
         if (gold >= item.getCost() && (id < getNumExpendables() || numBought < 1)) {
             DataAndSettingsManager.setNumBoughtForStoreItem(key, numBought + 1);
             DataAndSettingsManager.setGoldAmount(gold -= item.getCost());
-            /*if (item.shouldTrackItemPurchaseDate()) {
-                DataAndSettingsManager.setPurchaseDateForStoreItem(name, DateTime.Now);
-            }
-            if (item.shouldTrackItemExpirationDate()) {
-                DataAndSettingsManager.setExpirationDateForStoreItem(name, DateTime.Now);
-            }*/
-            // TODO:
-            // in this method, add stuff specifically for no ads, or figure out a delegate or something
-            // when user buys a no ad thingy, check expiration date
-            // if expiration date is in the future, advance it by 24 hours
-            // if it is in the past, set it to 24 hours from now
-            // also set the list item label "X left" part somehow, according to difference between now and expiration date in days
             if (item.hasLifespan()) {
                 DateTime expiration = DataAndSettingsManager.getExpirationDateForStoreItem(key);
                 DateTime now = DateTime.Now;
@@ -79,7 +67,7 @@ public class StoreManager : MonoBehaviour {
                     // the item hasn't expired yet, so advance the expiration date further
                     DataAndSettingsManager.setExpirationDateForStoreItem(key, expiration.Add(lifespan));
                 }
-                Debug.Log("expiration date was " + expiration.ToString());
+                //Debug.Log("expiration date was " + expiration.ToString());
             }
             return true;
         }
@@ -108,23 +96,6 @@ public class StoreManager : MonoBehaviour {
             }
         }
     }
-
-    /* * * * Item-specific methods * * * */
-
-    /*public static void checkNoAdsTime() {
-        int numBought = DataAndSettingsManager.getNumBoughtForStoreItem(ITEM_NAME_NO_ADS_TEMPORARY);
-        if (numBought > 0) {
-            DateTime expiration = DataAndSettingsManager.getExpirationDateForStoreItem(ITEM_NAME_NO_ADS_TEMPORARY);
-            DateTime now = DateTime.Now;
-            // (if expiration is later than now, then do nothing)
-            // if expiration is before now, then
-            // // if difference between expiration and last purchase
-        }
-    }
-
-    public static bool noAdsHasExpired() {
-        return (DataAndSettingsManager.getExpirationDateForStoreItem(ITEM_NAME_NO_ADS_TEMPORARY) < DateTime.Now);
-    }*/
 
 }
 
