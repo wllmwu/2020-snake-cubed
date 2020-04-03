@@ -72,22 +72,22 @@ public class DataAndSettingsManager : MonoBehaviour {
     public static bool getSoundsEnabledState() { return retrieveBool(KEY_SOUND_EFFECTS, true); }
     public static void setSoundsEnabledState(bool isOn) { saveBool(KEY_SOUND_EFFECTS, isOn); }
 
-    public static int getNumBoughtForStoreItem(string name) { return retrieveInt("store." + name, 0); }
-    public static void setNumBoughtForStoreItem(string name, int numBought) { saveInt("store." + name, numBought); }
+    public static int getNumBoughtForStoreItem(string itemKey) { return retrieveInt(itemKey, 0); }
+    public static void setNumBoughtForStoreItem(string itemKey, int numBought) { saveInt(itemKey, numBought); }
 
     /*public static DateTime getPurchaseDateForStoreItem(string name) {
         return retrieveDate("store.buy." + name);
     }
     public static void setPurchaseDateForStoreItem(string name, DateTime date) {
         saveDate("store.buy" + name, date);
-    }
-
-    public static DateTime getExpirationDateForStoreItem(string name) {
-        return retrieveDate("store.expire." + name);
-    }
-    public static void setExpirationDateForStoreItem(string name, DateTime date) {
-        saveDate("store.expire." + name, date);
     }*/
+
+    public static DateTime getExpirationDateForStoreItem(string itemKey) {
+        return retrieveDate(itemKey + ".expire");
+    }
+    public static void setExpirationDateForStoreItem(string itemKey, DateTime date) {
+        saveDate(itemKey + ".expire", date);
+    }
 
     /* * * * Public methods * * * */
 

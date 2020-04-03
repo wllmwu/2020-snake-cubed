@@ -36,6 +36,7 @@ public class MainMenu : MonoBehaviour {
         this.updateStatsMenu();
         StartCoroutine("generateMenuCubes");
         FindObjectOfType<AudioManager>().playMusic(AudioManager.MUSIC_MENU);
+        StoreManager.updateLifespanItemCounts();
         MobileAds.Initialize(initStatus => {});
     }
 
@@ -53,9 +54,8 @@ public class MainMenu : MonoBehaviour {
 
     public void openMainAction() {
         this.deactivateAllPanels();
-        this.crownImage.SetActive(DataAndSettingsManager.getNumBoughtForStoreItem(StoreManager.ITEM_NAME_BRAGGING_RIGHTS) > 0);
+        this.crownImage.SetActive(DataAndSettingsManager.getNumBoughtForStoreItem(StoreManager.ITEM_KEY_BRAGGING_RIGHTS) > 0);
         this.mainPanel.SetActive(true);
-        StoreManager.checkNoAdsTime();
     }
 
     ///<summary>This method is linked to the Stats button on the canvas.</summary>
@@ -66,7 +66,7 @@ public class MainMenu : MonoBehaviour {
 
     public void resetAverageAction() {
         DataAndSettingsManager.resetAverageScore();
-        StoreManager.expendItem(StoreManager.ITEM_NAME_RESET_AVERAGE);
+        StoreManager.expendItem(StoreManager.ITEM_KEY_RESET_AVERAGE);
         this.updateStatsMenu();
     }
 
@@ -150,7 +150,7 @@ public class MainMenu : MonoBehaviour {
     }
 
     private void showResetAverageButtonIfNecessary() {
-        int resetsLeft = DataAndSettingsManager.getNumBoughtForStoreItem(StoreManager.ITEM_NAME_RESET_AVERAGE);
+        int resetsLeft = DataAndSettingsManager.getNumBoughtForStoreItem(StoreManager.ITEM_KEY_RESET_AVERAGE);
         this.resetAverageButtonLabel.text = "Reset average (" + resetsLeft + ")";
         this.resetAverageButton.SetActive(resetsLeft > 0);
     }

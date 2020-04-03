@@ -24,9 +24,19 @@ public class GameEnder : StateChangeListener {
     public GameObject reviveWithAdButton;
     public AudioManager audioManager;
 
+    private bool shouldShowAds;
     private InterstitialAd interstitialAd;
     private RewardedAd rewardedAd;
     private bool shouldReviveFromAd;
+
+    /* * * * Lifecycle methods * * * */
+
+    void Start() {
+        // check if "no ads" is active
+        DateTime noAdsExpiration = DataAndSettingsManager.getExpirationDateForStoreItem(StoreManager.ITEM_KEY_NO_ADS_TEMPORARY);
+        DateTime now = DateTime.Now;
+        this.shouldShowAds = (noAdsExpiration.CompareTo(now) < 0);
+    }
 
     /* * * * StateChangeListener delegate * * * */
 
@@ -46,7 +56,7 @@ public class GameEnder : StateChangeListener {
     /* * * * UI actions * * * */
 
     public void reviveAction() {
-        StoreManager.expendItem(StoreManager.ITEM_NAME_EXTRA_LIFE);
+        StoreManager.expendItem(StoreManager.ITEM_KEY_EXTRA_LIFE);
         this.reviveGame();
     }
 
@@ -110,7 +120,7 @@ public class GameEnder : StateChangeListener {
     private void showReviveButtonsIfNecessary() {
         bool canRevive = (this.consecutiveRevivals < 3 && GameStateManager.canRevive());
         if (canRevive) {
-            int revivesLeft = DataAndSettingsManager.getNumBoughtForStoreItem(StoreManager.ITEM_NAME_EXTRA_LIFE);
+            int revivesLeft = DataAndSettingsManager.getNumBoughtForStoreItem(StoreManager.ITEM_KEY_EXTRA_LIFE);
             this.reviveButtonLabel.text = "Revive (" + revivesLeft + ")";
             this.reviveButton.SetActive(revivesLeft > 0);
         }
@@ -122,7 +132,7 @@ public class GameEnder : StateChangeListener {
 
     private void showInterstitialAdIfNecessary() {
         //Debug.Log("consecutiveRounds = " + consecutiveRounds);
-        if (this.consecutiveRounds % 2 == 1 && this.interstitialAd.IsLoaded()) { // show an ad every other round
+        if (this.shouldShowAds && this.consecutiveRounds % 2 == 1 && this.interstitialAd.IsLoaded()) { // show an ad every other round
             this.interstitialAd.Show();
         }
     }

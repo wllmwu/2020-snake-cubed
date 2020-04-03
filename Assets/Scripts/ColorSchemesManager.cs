@@ -41,7 +41,7 @@ public class ColorSchemesManager : MonoBehaviour {
             new Color(1f, 167/255f, 178/255f, 1f),              // apple - pastel red
             new Color(1f, 240/255f, 153/255f, 1f),              // gold - pastel yellow
             new Color(184/255f, 157/255f, 202/255f, 1f),        // bad - pastel purple
-            StoreManager.ITEM_NAME_COLORS_PAS_FRU
+            StoreManager.ITEM_KEY_COLORS_PAS_FRU
         ),
         new ColorScheme(
             "Fruit", // ID = 3
@@ -50,7 +50,7 @@ public class ColorSchemesManager : MonoBehaviour {
             new Color(241/255f, 35/255f, 52/255f, 1f),      // apple - apple red
             new Color(1f, 211/255f, 25/255f, 1f),           // gold - banana yellow
             new Color(173/255f, 110/255f, 11/255f, 1f),     // bad - brown
-            StoreManager.ITEM_NAME_COLORS_PAS_FRU
+            StoreManager.ITEM_KEY_COLORS_PAS_FRU
         ),
         new ColorScheme(
             "Warm", // ID = 4
@@ -59,7 +59,7 @@ public class ColorSchemesManager : MonoBehaviour {
             new Color(248/255f, 130/255f, 0f, 1f),          // apple - orange
             new Color(1f, 211/255f, 25/255f, 1f),           // gold - yellow
             new Color(55/255f, 34/255f, 0f, 1f),            // bad - dark brown
-            StoreManager.ITEM_NAME_COLORS_WAR_COO
+            StoreManager.ITEM_KEY_COLORS_WAR_COO
         ),
         new ColorScheme(
             "Cool", // ID = 5
@@ -68,7 +68,7 @@ public class ColorSchemesManager : MonoBehaviour {
             new Color(8/255f, 97/255f, 183/255f, 1f),       // apple - blue
             new Color(138/255f, 43/255f, 195/255f, 1f),     // gold - purple
             new Color(0f, 15/255f, 65/255f, 1f),            // bad - dark navy blue
-            StoreManager.ITEM_NAME_COLORS_WAR_COO
+            StoreManager.ITEM_KEY_COLORS_WAR_COO
         ),
         new ColorScheme(
             "Midnight", // ID = 6
@@ -77,7 +77,7 @@ public class ColorSchemesManager : MonoBehaviour {
             new Color(20/255f, 20/255f, 20/255f, 1f),   // apple - very dark gray
             new Color(30/255f, 30/255f, 30/255f, 1f),   // gold - slightly less dark gray
             new Color(0f, 0f, 0f, 1f),                  // bad - black
-            StoreManager.ITEM_NAME_COLORS_MID_WHI
+            StoreManager.ITEM_KEY_COLORS_MID_WHI
         ),
         new ColorScheme(
             "Whiteout", // ID = 7
@@ -86,7 +86,7 @@ public class ColorSchemesManager : MonoBehaviour {
             new Color(245/255f, 245/255f, 245/255f, 1f),    // apple - light gray
             new Color(1f, 1f, 1f, 1f),                      // gold - white
             new Color(235/255f, 235/255f, 235/255f, 1f),    // bad - less light gray
-            StoreManager.ITEM_NAME_COLORS_MID_WHI
+            StoreManager.ITEM_KEY_COLORS_MID_WHI
         ),
         new ColorScheme(
             "RGB", // ID = 8
@@ -95,7 +95,7 @@ public class ColorSchemesManager : MonoBehaviour {
             new Color(1f, 0f, 0f, 1f),          // apple - red
             new Color(0f, 1f, 0f, 1f),          // gold - green
             new Color(0f, 0f, 1f, 1f),          // bad - blue
-            StoreManager.ITEM_NAME_COLORS_RGB_CMY
+            StoreManager.ITEM_KEY_COLORS_RGB_CMY
         ),
         new ColorScheme(
             "CMYK", // ID = 9
@@ -104,7 +104,7 @@ public class ColorSchemesManager : MonoBehaviour {
             new Color(204/255f, 0f, 106/255f, 1f),              // apple - magenta
             new Color(1f, 241/255f, 11/255f, 1f),               // gold - yellow
             new Color(0f, 0f, 0f, 1f),                          // bad - black
-            StoreManager.ITEM_NAME_COLORS_RGB_CMY
+            StoreManager.ITEM_KEY_COLORS_RGB_CMY
         )
         // new ColorScheme(
         //     "", // ID = _
@@ -184,16 +184,16 @@ public class ColorScheme {
     private string name;
     [SerializeField]
     private Color boundsColor, snakeColor, appleColor, goldColor, badColor;
-    private string packName;
+    private string pack;
 
-    public ColorScheme(string name, Color bounds, Color snake, Color apple, Color gold, Color bad, string packName) {
+    public ColorScheme(string name, Color bounds, Color snake, Color apple, Color gold, Color bad, string pack) {
         this.name = name;
         this.boundsColor = bounds;
         this.snakeColor = snake;
         this.appleColor = apple;
         this.goldColor = gold;
         this.badColor = bad;
-        this.packName = packName;
+        this.pack = pack;
     }
 
     public string getName() { return this.name; }
@@ -202,7 +202,7 @@ public class ColorScheme {
     public Color getAppleColor() { return this.appleColor; }
     public Color getGoldColor() { return this.goldColor; }
     public Color getBadColor() { return this.badColor; }
-    public string getPackName() { return this.packName; }
+    public string getPackName() { return this.pack; }
 
     ///<summary>Sets the albedo colors of the given materials to the colors specified in this `ColorScheme`.</summary>
     public void changeMaterialColors(Material bounds, Material snake, Material apple, Material gold, Material bad) {
