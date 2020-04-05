@@ -8,7 +8,9 @@ public class StoreMenu : MonoBehaviour {
     public Text goldLabel;
     public GameObject expendablesListContentRect;
     public GameObject unlockablesListContentRect;
+    public GameObject purchasablesListContentRect;
     public StoreListItem listItemPrefab;
+    public StoreIAPListItem iapListItemPrefab;
 
     private static readonly float LIST_ITEM_HEIGHT = 180f;
     private static readonly float LIST_TITLE_HEIGHT = 80f;

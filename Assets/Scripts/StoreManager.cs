@@ -2,8 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Purchasing;
 
-public class StoreManager : MonoBehaviour {
+public class StoreManager : MonoBehaviour, IStoreListener {
 
     /* * * * Names of expendable items * * * */
     public static readonly string ITEM_KEY_EXTRA_LIFE = "store.1up";
@@ -33,7 +34,10 @@ public class StoreManager : MonoBehaviour {
     };
     private static readonly int numExpendables = 3;
 
-    /* * * * Public methods * * * */
+    private static IStoreController storeController;
+    private static IExtensionProvider storeExtensionProvider; // TODO: figure out scripted vs. codeless IAP ??
+
+    /* * * * Public getters * * * */
 
     public static int getNumExpendables() {
         return numExpendables;
@@ -46,6 +50,8 @@ public class StoreManager : MonoBehaviour {
     public static StoreItem getItemWithID(int id) {
         return STORE_ITEMS[id];
     }
+
+    /* * * * Buying items * * * */
 
     public static bool buyItem(int id) {
         StoreItem item = STORE_ITEMS[id];
@@ -95,6 +101,28 @@ public class StoreManager : MonoBehaviour {
                 }
             }
         }
+    }
+
+    /* * * * In-app purchases * * * */
+
+    //
+
+    /* * * * IStoreListener delegate methods * * * */
+
+    public void OnInitialized(IStoreController controller, IExtensionProvider extensions) {
+        //
+    }
+
+    public void OnInitializeFailed(InitializationFailureReason error) {
+        //
+    }
+
+    public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs args) {
+        //
+    }
+
+    public void OnPurchaseFailed(Product product, PurchaseFailureReason error) {
+        //
     }
 
 }
