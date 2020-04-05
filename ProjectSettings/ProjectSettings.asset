@@ -650,10 +650,10 @@ PlayerSettings:
   facebookXfbml: 0
   facebookFrictionlessRequests: 1
   apiCompatibilityLevel: 6
-  cloudProjectId: 
+  cloudProjectId: 32932698-7847-4d61-8eea-d7deb811f65f
   framebufferDepthMemorylessMode: 0
-  projectName: Template_3D
-  organizationId: 
+  projectName: S-cubed
+  organizationId: quaderatics
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
   disableOldInputManagerSupport: 0
