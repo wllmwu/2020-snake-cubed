@@ -35,7 +35,7 @@ public class StoreMenu : MonoBehaviour {
         this.updateGoldLabel();
     }*/
 
-    /* * * * Helper methods * * * */
+    /* * * * Private methods * * * */
 
     private void updateGoldLabel() {
         this.goldLabel.text = "" + DataAndSettingsManager.getGoldAmount();
@@ -66,6 +66,18 @@ public class StoreMenu : MonoBehaviour {
         float unlockablesRectHeight = LIST_ITEM_HEIGHT * (StoreManager.getNumItems() - StoreManager.getNumExpendables()) + LIST_TITLE_HEIGHT;
         unlockablesRect.offsetMax = new Vector2(0f, -expandablesRectHeight - 20f);
         unlockablesRect.sizeDelta = new Vector2(0f, unlockablesRectHeight);
+    }
+
+    /* * * * Public methods * * * */
+
+    public void setupIAPSection(bool iapDidLoad) {
+        if (iapDidLoad) {
+            // populate IAP section
+            // TODO: hide loading message
+        }
+        else {
+            // change message
+        }
     }
 
 }

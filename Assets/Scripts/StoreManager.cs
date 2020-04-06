@@ -2,9 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Purchasing;
 
-public class StoreManager : MonoBehaviour, IStoreListener {
+public class StoreManager : MonoBehaviour {
 
     /* * * * Names of expendable items * * * */
     public static readonly string ITEM_KEY_EXTRA_LIFE = "store.1up";
@@ -25,17 +24,14 @@ public class StoreManager : MonoBehaviour, IStoreListener {
         new StoreItem(ITEM_KEY_NO_ADS_TEMPORARY, "No ads for 24 hours", 10, "Activate immediately (they stack).", 24),
         new StoreItem(ITEM_KEY_RESET_AVERAGE, "Reset average", 25, "Reset from the Stats menu."),
         // unlockables
-        new StoreItem(ITEM_KEY_HARD_MODE, "Hard mode", 50, "Toggle when starting a game."),
-        new StoreItem(ITEM_KEY_COLORS_PAS_FRU, "Pastel & Fruit", 60, "Find these new color schemes in Settings."),
-        new StoreItem(ITEM_KEY_COLORS_WAR_COO, "Warm & Cool", 60, "Find these new color schemes in Settings."),
-        new StoreItem(ITEM_KEY_COLORS_MID_WHI, "Midnight & Whiteout", 60, "Find these new color schemes in Settings."),
-        new StoreItem(ITEM_KEY_COLORS_RGB_CMY, "RGB & CMYK", 60, "Find these new color schemes in Settings."),
+        new StoreItem(ITEM_KEY_HARD_MODE, "Hard mode", 40, "Toggle when starting a game."),
+        new StoreItem(ITEM_KEY_COLORS_PAS_FRU, "Pastel & Fruit", 50, "Find these new color schemes in Settings."),
+        new StoreItem(ITEM_KEY_COLORS_WAR_COO, "Warm & Cool", 50, "Find these new color schemes in Settings."),
+        new StoreItem(ITEM_KEY_COLORS_MID_WHI, "Midnight & Whiteout", 50, "Find these new color schemes in Settings."),
+        new StoreItem(ITEM_KEY_COLORS_RGB_CMY, "RGB & CMYK", 50, "Find these new color schemes in Settings."),
         new StoreItem(ITEM_KEY_BRAGGING_RIGHTS, "Bragging rights", 500, "Brag anywhere (unlocks a secret).")
     };
     private static readonly int numExpendables = 3;
-
-    private static IStoreController storeController;
-    private static IExtensionProvider storeExtensionProvider; // TODO: figure out scripted vs. codeless IAP ??
 
     /* * * * Public getters * * * */
 
@@ -103,28 +99,6 @@ public class StoreManager : MonoBehaviour, IStoreListener {
         }
     }
 
-    /* * * * In-app purchases * * * */
-
-    //
-
-    /* * * * IStoreListener delegate methods * * * */
-
-    public void OnInitialized(IStoreController controller, IExtensionProvider extensions) {
-        //
-    }
-
-    public void OnInitializeFailed(InitializationFailureReason error) {
-        //
-    }
-
-    public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs args) {
-        //
-    }
-
-    public void OnPurchaseFailed(Product product, PurchaseFailureReason error) {
-        //
-    }
-
 }
 
 ///<summary>A class to organize information about store items.</summary>
@@ -169,5 +143,23 @@ public class StoreItem {
     public int getNumBought() {
         return DataAndSettingsManager.getNumBoughtForStoreItem(this.key);
     }
+
+}
+
+public class IAPItem {
+
+    private string key;
+    private string productID;
+    private string description;
+
+    public IAPItem(string key, string productID, string description) {
+        this.key = key;
+        this.productID = productID;
+        this.description = description;
+    }
+
+    public string getKey() { return this.key; }
+    public string getProductID() { return this.productID; }
+    public string getDescription() { return this.description; }
 
 }
