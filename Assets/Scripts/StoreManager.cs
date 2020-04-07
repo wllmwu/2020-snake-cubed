@@ -145,21 +145,3 @@ public class StoreItem {
     }
 
 }
-
-public class IAPItem {
-
-    private string key;
-    private string productID;
-    private string description;
-
-    public IAPItem(string key, string productID, string description) {
-        this.key = key;
-        this.productID = productID;
-        this.description = description;
-    }
-
-    public string getKey() { return this.key; }
-    public string getProductID() { return this.productID; }
-    public string getDescription() { return this.description; }
-
-}

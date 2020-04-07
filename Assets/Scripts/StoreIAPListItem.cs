@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Purchasing;
 using System;
 
 public class StoreIAPListItem : MonoBehaviour {
@@ -11,41 +12,40 @@ public class StoreIAPListItem : MonoBehaviour {
     public Text costLabel;
     public Text descriptionLabel;
 
-    private int itemID;
-    private bool isExpendableItem;
-    private Action menuResponder;
+    private int itemIndex;
+    private string productID;
+    private bool isConsumable;
+    private bool hasReceipt;
 
     /* * * * Public methods * * * */
 
-    public void setup(int itemID, bool isExpendableItem, Action menuResponder) {
-        this.itemID = itemID;
-        this.isExpendableItem = isExpendableItem;
-        this.menuResponder = menuResponder;
-        this.updateLabelsAndButton();
+    public void setup(int itemIndex) {
+        this.itemIndex = itemIndex;
+        IAPItem item = IAPManager.getIAPWithIndex(itemIndex);
+        this.productID = item.getProductID();
+        Product product = IAPManager.getProductWithID(productID);
+        this.itemLabel.text = product.metadata.localizedTitle;
+        this.descriptionLabel.text = product.metadata.localizedDescription;
+        this.costLabel.text = product.metadata.localizedPriceString;
+        this.isConsumable = (product.definition.type == ProductType.Consumable);
+        this.hasReceipt = product.hasReceipt;
+        this.updateButton();
     }
 
     /* * * * UI actions * * * */
 
     public void buyAction() {
         FindObjectOfType<AudioManager>().playButtonSound();
-        if (StoreManager.buyItem(this.itemID)) {
-            this.updateLabelsAndButton();
+        /*if (StoreManager.buyItem(this.itemIndex)) {
+            this.updateButton();
             this.menuResponder();
-        }
+        }*/
     }
 
     /* * * * Helper methods * * * */
 
-    private void updateLabelsAndButton() {
-        StoreItem si = StoreManager.getItemWithID(this.itemID);
-        string name = si.getName();
-        if (this.isExpendableItem) {
-            name += " (" + si.getNumBought() + " left)";
-        }
-        this.itemLabel.text = name;
-        this.costLabel.text = "" + si.getCost();
-        this.buyButton.interactable = (this.isExpendableItem || si.getNumBought() == 0);
-        this.descriptionLabel.text = si.getDescription();
+    private void updateButton() {
+        this.buyButton.interactable = (this.isConsumable || this.hasReceipt);
     }
 
 }

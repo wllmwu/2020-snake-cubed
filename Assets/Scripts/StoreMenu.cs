@@ -11,6 +11,7 @@ public class StoreMenu : MonoBehaviour {
     public GameObject purchasablesListContentRect;
     public StoreListItem listItemPrefab;
     public StoreIAPListItem iapListItemPrefab;
+    public Text iapLoadingLabel;
 
     private static readonly float LIST_ITEM_HEIGHT = 180f;
     private static readonly float LIST_TITLE_HEIGHT = 80f;
@@ -58,14 +59,18 @@ public class StoreMenu : MonoBehaviour {
             item.setup(i, false, this.updateGoldLabel);
         }
 
-        // adjust content rect heights - anchors are at top left and top right
-        RectTransform expandablesRect = this.expendablesListContentRect.GetComponent<RectTransform>();
-        float expandablesRectHeight = LIST_ITEM_HEIGHT * StoreManager.getNumExpendables() + LIST_TITLE_HEIGHT;
-        expandablesRect.sizeDelta = new Vector2(0f, expandablesRectHeight);
+        // adjust content rect heights and positions - anchors are at top left and top right
+        RectTransform expendablesRect = this.expendablesListContentRect.GetComponent<RectTransform>();
+        float expendablesRectHeight = LIST_ITEM_HEIGHT * StoreManager.getNumExpendables() + LIST_TITLE_HEIGHT;
+        expendablesRect.sizeDelta = new Vector2(0f, expendablesRectHeight);
         RectTransform unlockablesRect = this.unlockablesListContentRect.GetComponent<RectTransform>();
         float unlockablesRectHeight = LIST_ITEM_HEIGHT * (StoreManager.getNumItems() - StoreManager.getNumExpendables()) + LIST_TITLE_HEIGHT;
-        unlockablesRect.offsetMax = new Vector2(0f, -expandablesRectHeight - 20f);
+        unlockablesRect.offsetMax = new Vector2(0f, -expendablesRectHeight - 20f);
         unlockablesRect.sizeDelta = new Vector2(0f, unlockablesRectHeight);
+        RectTransform purchasablesRect = this.purchasablesListContentRect.GetComponent<RectTransform>();
+        float purchasablesRectHeight = LIST_ITEM_HEIGHT * IAPManager.getNumIAPs() + LIST_TITLE_HEIGHT;
+        purchasablesRect.offsetMax = new Vector2(0f, -expendablesRectHeight - unlockablesRectHeight - 20f);
+        purchasablesRect.sizeDelta = new Vector2(0f, purchasablesRectHeight);
     }
 
     /* * * * Public methods * * * */
@@ -73,10 +78,17 @@ public class StoreMenu : MonoBehaviour {
     public void setupIAPSection(bool iapDidLoad) {
         if (iapDidLoad) {
             // populate IAP section
-            // TODO: hide loading message
+            this.iapLoadingLabel.gameObject.SetActive(false);
+            for (int i = 0; i < IAPManager.getNumIAPs(); i++) {
+                StoreIAPListItem item = Instantiate(this.iapListItemPrefab, new Vector2(0f, -LIST_ITEM_HEIGHT * i - LIST_TITLE_HEIGHT), Quaternion.identity) as StoreIAPListItem;
+                RectTransform itemRect = item.gameObject.GetComponent<RectTransform>();
+                itemRect.SetParent(this.purchasablesListContentRect.transform, false);
+                item.setup(i);
+            }
         }
         else {
             // change message
+            this.iapLoadingLabel.text = "Currently unavailable";
         }
     }
 
