@@ -12,7 +12,7 @@ public class StoreIAPListItem : MonoBehaviour {
     public Text costLabel;
     public Text descriptionLabel;
 
-    private int itemIndex;
+    //private int itemIndex;
     private string productID;
     private bool isConsumable;
     private bool hasReceipt;
@@ -20,9 +20,8 @@ public class StoreIAPListItem : MonoBehaviour {
     /* * * * Public methods * * * */
 
     public void setup(int itemIndex) {
-        this.itemIndex = itemIndex;
-        IAPItem item = IAPManager.getIAPWithIndex(itemIndex);
-        this.productID = item.getProductID();
+        //this.itemIndex = itemIndex;
+        this.productID = IAPManager.getProductID(itemIndex);
         Product product = IAPManager.getProductWithID(productID);
         this.itemLabel.text = product.metadata.localizedTitle;
         this.descriptionLabel.text = product.metadata.localizedDescription;

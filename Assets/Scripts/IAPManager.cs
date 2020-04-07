@@ -13,9 +13,9 @@ public class IAPManager : MonoBehaviour, IStoreListener {
     public static readonly string ITEM_KEY_IAP_NO_ADS = "iap.noadsperm";
     private static readonly string PRODUCT_ID_100_GOLD = "com.williamwu.scubed.100gold";
     private static readonly string PRODUCT_ID_NO_ADS = "com.williamwu.scubed.noads";
-    private static readonly IAPItem[] IAP_ITEMS = {
-        new IAPItem(ITEM_KEY_IAP_100_GOLD, PRODUCT_ID_100_GOLD, "100 gold cubes to spend in this store."),
-        new IAPItem(ITEM_KEY_IAP_NO_ADS, PRODUCT_ID_NO_ADS, "Permanently disable ads (revive still enabled).")
+    private static readonly string[] IAP_PRODUCT_IDS = {
+        PRODUCT_ID_100_GOLD,
+        PRODUCT_ID_NO_ADS
     };
 
     public StoreMenu storeMenu;
@@ -32,11 +32,11 @@ public class IAPManager : MonoBehaviour, IStoreListener {
     /* * * * Public methods * * * */
 
     public static int getNumIAPs() {
-        return IAP_ITEMS.Length;
+        return IAP_PRODUCT_IDS.Length;
     }
 
-    public static IAPItem getIAPWithIndex(int index) {
-        return IAP_ITEMS[index];
+    public static string getProductID(int index) {
+        return IAP_PRODUCT_IDS[index];
     }
 
     public static Product getProductWithID(string productID) {
@@ -77,24 +77,5 @@ public class IAPManager : MonoBehaviour, IStoreListener {
     public void OnPurchaseFailed(Product product, PurchaseFailureReason error) {
         //
     }
-
-}
-
-public class IAPItem {
-
-    private string key;
-    private string productID;
-    private string description;
-
-    public IAPItem(string key, string productID, string description) {
-        this.key = key;
-        this.productID = productID;
-        this.description = description;
-    }
-
-    public string getKey() { return this.key; }
-    public string getProductID() { return this.productID; }
-    public string getDescription() { return this.description; }
-    public int numBought() { return DataAndSettingsManager.getNumBoughtForStoreItem(this.key); }
 
 }
