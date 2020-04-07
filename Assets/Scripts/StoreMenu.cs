@@ -38,10 +38,6 @@ public class StoreMenu : MonoBehaviour {
 
     /* * * * Private methods * * * */
 
-    private void updateGoldLabel() {
-        this.goldLabel.text = "" + DataAndSettingsManager.getGoldAmount();
-    }
-
     private void setupList() {
         // expendables
         for (int i = 0; i < StoreManager.getNumExpendables(); i++) {
@@ -74,6 +70,10 @@ public class StoreMenu : MonoBehaviour {
     }
 
     /* * * * Public methods * * * */
+
+    public void updateGoldLabel() {
+        this.goldLabel.text = "" + DataAndSettingsManager.getGoldAmount();
+    }
 
     public void setupIAPSection(bool iapDidLoad) {
         if (iapDidLoad) {

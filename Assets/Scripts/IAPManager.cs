@@ -43,10 +43,23 @@ public class IAPManager : MonoBehaviour, IStoreListener {
         return storeController.products.WithID(productID);
     }
 
+    public static void buyProduct(string productID) {
+        if (isInitialized()) {
+            Product product = storeController.products.WithID(productID);
+            if (product != null) {
+                storeController.InitiatePurchase(product); // will receive a callback to either ProcessPurchase or OnPurchaseFailed
+            }
+        }
+    }
+
     /* * * * Private methods * * * */
 
+    private static bool isInitialized() {
+        return (storeController != null && storeExtensionProvider != null);
+    }
+
     private void initializePurchasing() {
-        if (storeController != null && storeExtensionProvider != null) {
+        if (isInitialized()) {
             return; // already initialized
         }
         var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
@@ -70,12 +83,20 @@ public class IAPManager : MonoBehaviour, IStoreListener {
     }
 
     public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs args) {
-        //
+        string id = args.purchasedProduct.definition.id;
+        if (id.Equals(PRODUCT_ID_100_GOLD)) {
+            int gold = DataAndSettingsManager.getGoldAmount();
+            DataAndSettingsManager.setGoldAmount(gold + 100);
+            storeMenu.updateGoldLabel();
+        }
+        else if (id.Equals(PRODUCT_ID_NO_ADS)) {
+            //
+        }
         return PurchaseProcessingResult.Complete;
     }
 
     public void OnPurchaseFailed(Product product, PurchaseFailureReason error) {
-        //
+        Debug.Log("purchase failed: " + error);
     }
 
 }

@@ -12,7 +12,6 @@ public class StoreIAPListItem : MonoBehaviour {
     public Text costLabel;
     public Text descriptionLabel;
 
-    //private int itemIndex;
     private string productID;
     private bool isConsumable;
     private bool hasReceipt;
@@ -20,7 +19,6 @@ public class StoreIAPListItem : MonoBehaviour {
     /* * * * Public methods * * * */
 
     public void setup(int itemIndex) {
-        //this.itemIndex = itemIndex;
         this.productID = IAPManager.getProductID(itemIndex);
         Product product = IAPManager.getProductWithID(productID);
         this.itemLabel.text = product.metadata.localizedTitle;
@@ -35,10 +33,7 @@ public class StoreIAPListItem : MonoBehaviour {
 
     public void buyAction() {
         FindObjectOfType<AudioManager>().playButtonSound();
-        /*if (StoreManager.buyItem(this.itemIndex)) {
-            this.updateButton();
-            this.menuResponder();
-        }*/
+        IAPManager.buyProduct(this.productID);
     }
 
     /* * * * Helper methods * * * */
