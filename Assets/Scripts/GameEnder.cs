@@ -35,7 +35,7 @@ public class GameEnder : StateChangeListener {
         // check if "no ads" is active
         DateTime noAdsExpiration = DataAndSettingsManager.getExpirationDateForStoreItem(StoreManager.ITEM_KEY_NO_ADS_TEMPORARY);
         DateTime now = DateTime.Now;
-        this.shouldShowAds = (noAdsExpiration.CompareTo(now) < 0);
+        this.shouldShowAds = (noAdsExpiration.CompareTo(now) < 0 && IAPManager.shouldShowAds());
     }
 
     /* * * * StateChangeListener delegate * * * */

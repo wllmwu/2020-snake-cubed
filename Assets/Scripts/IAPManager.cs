@@ -44,7 +44,7 @@ public class IAPManager : MonoBehaviour, IStoreListener {
     }
 
     public static void buyProduct(string productID) {
-        if (isInitialized()) {
+        if (storeIsInitialized()) {
             Product product = storeController.products.WithID(productID);
             if (product != null) {
                 storeController.InitiatePurchase(product); // will receive a callback to either ProcessPurchase or OnPurchaseFailed
@@ -52,14 +52,23 @@ public class IAPManager : MonoBehaviour, IStoreListener {
         }
     }
 
+    /* * * * Product-specific methods * * * */
+
+    public static bool shouldShowAds() {
+        if (storeIsInitialized()) {
+            return storeController.products.WithID(PRODUCT_ID_NO_ADS).hasReceipt;
+        }
+        return true;
+    }
+
     /* * * * Private methods * * * */
 
-    private static bool isInitialized() {
+    private static bool storeIsInitialized() {
         return (storeController != null && storeExtensionProvider != null);
     }
 
     private void initializePurchasing() {
-        if (isInitialized()) {
+        if (storeIsInitialized()) {
             return; // already initialized
         }
         var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
