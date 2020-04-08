@@ -27,6 +27,9 @@ public class IAPManager : MonoBehaviour, IStoreListener {
         if (storeController == null) {
             this.initializePurchasing();
         }
+        else {
+            this.storeMenu.setupIAPSection(true);
+        }
     }
 
     /* * * * Public methods * * * */
@@ -56,7 +59,8 @@ public class IAPManager : MonoBehaviour, IStoreListener {
 
     public static bool shouldShowAds() {
         if (storeIsInitialized()) {
-            return storeController.products.WithID(PRODUCT_ID_NO_ADS).hasReceipt;
+            // if this nonconsumable doesn't have a receipt, then it hasn't been purchased yet, so show ads
+            return !storeController.products.WithID(PRODUCT_ID_NO_ADS).hasReceipt;
         }
         return true;
     }

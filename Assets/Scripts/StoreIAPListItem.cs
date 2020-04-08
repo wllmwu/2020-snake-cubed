@@ -39,7 +39,7 @@ public class StoreIAPListItem : MonoBehaviour {
     /* * * * Helper methods * * * */
 
     private void updateButton() {
-        this.buyButton.interactable = (this.isConsumable || this.hasReceipt);
+        this.buyButton.interactable = (this.isConsumable || !this.hasReceipt);
     }
 
 }
