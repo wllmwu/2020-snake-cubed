@@ -31,6 +31,7 @@ public class StoreListItem : MonoBehaviour {
         if (StoreManager.buyItem(this.itemID)) {
             this.updateLabelsAndButton();
             this.menuResponder();
+            FindObjectOfType<AlertPrompt>().showMessage("Purchase successful!");
         }
     }
 

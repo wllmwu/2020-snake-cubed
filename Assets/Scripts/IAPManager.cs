@@ -105,11 +105,13 @@ public class IAPManager : MonoBehaviour, IStoreListener {
         else if (id.Equals(PRODUCT_ID_NO_ADS)) {
             //
         }
+        FindObjectOfType<AlertPrompt>().showMessage("Purchase successful!");
         return PurchaseProcessingResult.Complete;
     }
 
     public void OnPurchaseFailed(Product product, PurchaseFailureReason error) {
         Debug.Log("purchase failed: " + error);
+        FindObjectOfType<AlertPrompt>().showMessage("An error occurred while processing the purchase. Check if in-app purchases are allowed in the Settings app.");
     }
 
 }

@@ -61,11 +61,9 @@ public class StoreMenu : MonoBehaviour {
         expendablesRect.sizeDelta = new Vector2(0f, expendablesRectHeight);
         RectTransform unlockablesRect = this.unlockablesListContentRect.GetComponent<RectTransform>();
         float unlockablesRectHeight = LIST_ITEM_HEIGHT * (StoreManager.getNumItems() - StoreManager.getNumExpendables()) + LIST_TITLE_HEIGHT;
-        unlockablesRect.offsetMax = new Vector2(0f, -expendablesRectHeight - 20f);
         unlockablesRect.sizeDelta = new Vector2(0f, unlockablesRectHeight);
         RectTransform purchasablesRect = this.purchasablesListContentRect.GetComponent<RectTransform>();
         float purchasablesRectHeight = LIST_ITEM_HEIGHT * IAPManager.getNumIAPs() + LIST_TITLE_HEIGHT;
-        purchasablesRect.offsetMax = new Vector2(0f, -expendablesRectHeight - unlockablesRectHeight - 20f);
         purchasablesRect.sizeDelta = new Vector2(0f, purchasablesRectHeight);
     }
 
