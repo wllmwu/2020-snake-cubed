@@ -5,34 +5,29 @@ using UnityEngine;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
-public class DataAndSettingsManager : MonoBehaviour {
+public static class DataAndSettingsManager {
 
-    /* * * * Keys for player data * * * */
-
-    ///<summary>The key for the highscore, stored by PlayerPrefs.</summary>
+    // player data
     private static readonly string KEY_HIGHSCORE = "stats.highscore";
-    ///<summary>The key for the average score, stored by PlayerPrefs.</summary>
     private static readonly string KEY_AVERAGE_SCORE = "stats.average";
-    ///<summary>The key for the number of games stored, by PlayerPrefs.</summary>
     private static readonly string KEY_GAMES_PLAYED = "stats.games";
-    ///<summary>The key for the amount of gold, stored by PlayerPrefs.</summary>
     private static readonly string KEY_GOLD_AMOUNT = "stats.gold";
 
-    /* * * * Keys for player settings * * * */
-
-    ///<summary>The key for hard mode state, stored by PlayerPrefs.</summary>
+    // settings
     private static readonly string KEY_HARD_MODE = "settings.hardmode";
-    ///<summary>The key for colorblind mode persistent on/off state, stored by PlayerPrefs.</summary>
     private static readonly string KEY_COLORBLIND_MODE = "settings.colorblind";
-    ///<summary>The key for the current color scheme ID, stored by PlayerPrefs.</summary>
     private static readonly string KEY_COLOR_SCHEME_ID = "settings.colorscheme";
     /*private static readonly string PATH_CUSTOM_COLOR_SCHEME_FILE = "playercustomcs.s3d";*/
-    ///<summary>The key for smooth movement persistent on/off state, stored by PlayerPrefs.</summary>
     private static readonly string KEY_SMOOTH_MOVEMENT = "settings.smooth";
-    ///<summary>The key for music persistent on/off state, stored by PlayerPrefs.</summary>
     private static readonly string KEY_MUSIC = "settings.music";
-    ///<summary>The key for sound effects persistent on/off state, stored by PlayerPrefs.</summary>
     private static readonly string KEY_SOUND_EFFECTS = "settings.sounds";
+
+    private static readonly string SAVE_PATH = "/save.dat";
+    private static Dictionary<string, int> intData = new Dictionary<string, int>();
+    private static Dictionary<string, float> floatData = new Dictionary<string, float>();
+    private static Dictionary<string, bool> boolData = new Dictionary<string, bool>();
+    private static Dictionary<string, string> stringData = new Dictionary<string, string>();
+    private static bool changedSinceLastWrite;
 
     public delegate void SetColorblindMode(bool isOn);
     public static event SetColorblindMode OnToggleColorblindMode;
@@ -89,6 +84,34 @@ public class DataAndSettingsManager : MonoBehaviour {
         setGamesPlayed(0);
     }
 
+    public static void loadData() {
+        string path = Application.persistentDataPath + SAVE_PATH;
+        if (File.Exists(path)) {
+            BinaryFormatter formatter = new BinaryFormatter();
+            FileStream stream = new FileStream(path, FileMode.Open);
+            SaveData load = formatter.Deserialize(stream) as SaveData;
+            if (load != null) {
+                intData = load.getIntData();
+                floatData = load.getFloatData();
+                boolData = load.getBoolData();
+                stringData = load.getStringData();
+            }
+            stream.Close();
+        }
+    }
+
+    public static void writeData() {
+        if (changedSinceLastWrite) {
+            BinaryFormatter formatter = new BinaryFormatter();
+            string path = Application.persistentDataPath + SAVE_PATH;
+            FileStream stream = new FileStream(path, FileMode.Create);
+            SaveData save = new SaveData(intData, floatData, boolData, stringData, 0);
+            formatter.Serialize(stream, save);
+            stream.Close();
+        }
+        
+    }
+
     // UNUSED
     /*public static void savePlayerCustomColorScheme() {
         ColorScheme customScheme = ColorSchemesManager.getPlayerCustomScheme();
@@ -132,27 +155,47 @@ public class DataAndSettingsManager : MonoBehaviour {
         }
     }
 
-    /* * * * Save/retrieve functions * * * */
+    /* * * * Private save/retrieve functions * * * */
+
+    // TODO: add calls to loadData and writeData in appropriate places, and make sure this all works
 
     private static int retrieveInt(string key, int defaultValue) {
-        return PlayerPrefs.GetInt(key, defaultValue);
+        int value;
+        if (intData.TryGetValue(key, out value)) {
+            return value;
+        }
+        return defaultValue;
+        //return PlayerPrefs.GetInt(key, defaultValue);
     }
     private static void saveInt(string key, int value) {
-        PlayerPrefs.SetInt(key, value);
+        intData[key] = value;
+        //PlayerPrefs.SetInt(key, value);
     }
 
     private static float retrieveFloat(string key, float defaultValue) {
-        return PlayerPrefs.GetFloat(key, defaultValue);
+        float value;
+        if (floatData.TryGetValue(key, out value)) {
+            return value;
+        }
+        return defaultValue;
+        //return PlayerPrefs.GetFloat(key, defaultValue);
     }
     private static void saveFloat(string key, float value) {
-        PlayerPrefs.SetFloat(key, value);
+        floatData[key] = value;
+        //PlayerPrefs.SetFloat(key, value);
     }
 
     private static bool retrieveBool(string key, bool defaultValue) {
-        return PlayerPrefs.GetInt(key, (defaultValue ? 1 : 0)) != 0;
+        bool value;
+        if (boolData.TryGetValue(key, out value)) {
+            return value;
+        }
+        return defaultValue;
+        //return PlayerPrefs.GetInt(key, (defaultValue ? 1 : 0)) != 0;
     }
     private static void saveBool(string key, bool value) {
-        PlayerPrefs.SetInt(key, value ? 1 : 0);
+        boolData[key] = value;
+        //PlayerPrefs.SetInt(key, value ? 1 : 0);
     }
 
     private static DateTime retrieveDate(string key) {
@@ -166,43 +209,85 @@ public class DataAndSettingsManager : MonoBehaviour {
     }
 
     private static string retrieveString(string key, string defaultValue) {
-        return PlayerPrefs.GetString(key, defaultValue);
+        string value;
+        if (stringData.TryGetValue(key, out value)) {
+            return value;
+        }
+        return defaultValue;
+        //return PlayerPrefs.GetString(key, defaultValue);
     }
     private static void saveString(string key, string value) {
-        PlayerPrefs.SetString(key, value);
+        stringData[key] = value;
+        //PlayerPrefs.SetString(key, value);
     }
 
 }
 
 [System.Serializable]
 class SaveData {
-    // TODO: BinaryFormatter is not flexible.
-    // find a way to save/load this glob of data that can handle changes in object definition (e.g. adding new fields).
-    // consider formatting as a JSON string, wrapping in a class, and serializing that class..?
 
+    [SerializeField]
+    private Dictionary<string, int> intData;
+    [SerializeField]
+    private Dictionary<string, float> floatData;
+    [SerializeField]
+    private Dictionary<string, bool> boolData;
+    [SerializeField]
+    private Dictionary<string, string> stringData;
+    [SerializeField]
+    private int number;
+
+    public SaveData(Dictionary<string, int> ints, Dictionary<string, float> floats, Dictionary<string, bool> bools,
+        Dictionary<string, string> strings, int number) {
+        this.intData = ints;
+        this.floatData = floats;
+        this.boolData = bools;
+        this.stringData = strings;
+        this.number = number;
+    }
+
+    public Dictionary<string, int> getIntData() { return this.intData; }
+    public Dictionary<string, float> getFloatData() { return this.floatData; }
+    public Dictionary<string, bool> getBoolData() { return this.boolData; }
+    public Dictionary<string, string> getStringData() { return this.stringData; }
+/*
     // player stats
+    [SerializeField]
     private int highscore;
+    [SerializeField]
     private float averageScore;
+    [SerializeField]
     private int gamesPlayed;
+    [SerializeField]
     private int goldAmount;
 
     // settings
+    [SerializeField]
     private bool isHardModeOn;
-    private bool isColorblindModeOn;
+    /*private bool isColorblindModeOn;
     private int colorSchemeID;
     private bool isSmoothMovementOn;
     private bool isMusicOn;
     private bool isSoundEffectsOn;
 
     // store data
+    [SerializeField]
     private int numBoughtExtraLife;
+    [SerializeField]
     private int numBoughtNoAdsTemp;
+    [SerializeField]
     private int numBoughtResetAverage;
+    [SerializeField]
     private bool boughtHardMode;
+    [SerializeField]
     private bool boughtColorsPasFru;
+    [SerializeField]
     private bool boughtColorsWarCoo;
+    [SerializeField]
     private bool boughtColorsMidWhi;
+    [SerializeField]
     private bool boughtColorsRgbCmy;
-    private bool boughtBraggingRights;
+    [SerializeField]
+    private bool boughtBraggingRights;*/
 
 }
