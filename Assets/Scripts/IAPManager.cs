@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Purchasing;
+using UnityEngine.Purchasing.Security;
 
 public class IAPManager : MonoBehaviour, IStoreListener {
 
@@ -81,6 +82,32 @@ public class IAPManager : MonoBehaviour, IStoreListener {
         UnityPurchasing.Initialize(this, builder); // will receive a callback to either OnInitialized or OnInitializeFailed
     }
 
+    ///<summary>Returns whether the given IAP receipt a) is a valid receipt and b) contains the given product ID.
+    /// IMPORTANT: Only call this method when running on iOS or Android. Otherwise, perhaps assume the receipt is valid.</summary>
+    private bool validateReceipt(string receipt, string intendedProductID) {
+        var validator = new CrossPlatformValidator(GooglePlayTangle.Data(), AppleTangle.Data(), Application.identifier);
+        try {
+            var result = validator.Validate(receipt); // checks whether the receipt is valid, throws if not
+            bool foundMatch = false;
+            foreach (IPurchaseReceipt productReceipt in result) {
+                // user may provide a valid receipt from somewhere else, so look for the ID of the intended product
+                if (productReceipt.productID.Equals(intendedProductID)) {
+                    foundMatch = true;
+                    break;
+                }
+            }
+            return foundMatch;
+        }
+        catch (IAPSecurityException) {
+            Debug.Log("invalid receipt");
+            return false;
+        }
+        catch (System.Exception) {
+            Debug.Log("something bad happened while validating receipt");
+            return false;
+        }
+    }
+
     /* * * * IStoreListener delegate methods * * * */
 
     public void OnInitialized(IStoreController controller, IExtensionProvider extensions) {
@@ -96,16 +123,25 @@ public class IAPManager : MonoBehaviour, IStoreListener {
     }
 
     public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs args) {
-        string id = args.purchasedProduct.definition.id;
-        if (id.Equals(PRODUCT_ID_100_GOLD)) {
-            int gold = DataAndSettingsManager.getGoldAmount();
-            DataAndSettingsManager.setGoldAmount(gold + 100);
-            storeMenu.updateGoldLabel();
+        bool validPurchase = true;
+        string purchasedProductID = args.purchasedProduct.definition.id;
+        #if UNITY_IOS || UNITY_ANDROID
+        validPurchase = this.validateReceipt(args.purchasedProduct.receipt, purchasedProductID);
+        #endif
+        if (validPurchase) {
+            if (purchasedProductID.Equals(PRODUCT_ID_100_GOLD)) {
+                int gold = DataAndSettingsManager.getGoldAmount();
+                DataAndSettingsManager.setGoldAmount(gold + 100);
+                storeMenu.updateGoldLabel();
+            }
+            else if (purchasedProductID.Equals(PRODUCT_ID_NO_ADS)) {
+                // TODO probably nothing
+            }
+            FindObjectOfType<AlertPrompt>().showMessage("Purchase successful!");
         }
-        else if (id.Equals(PRODUCT_ID_NO_ADS)) {
-            //
+        else {
+            FindObjectOfType<AlertPrompt>().showMessage("Purchase failed validation.");
         }
-        FindObjectOfType<AlertPrompt>().showMessage("Purchase successful!");
         return PurchaseProcessingResult.Complete;
     }
 
