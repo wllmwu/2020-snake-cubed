@@ -2,8 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//using System.Runtime.Serialization.Formatters.Binary;
-//using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 public class DataAndSettingsManager : MonoBehaviour {
 
@@ -171,5 +171,38 @@ public class DataAndSettingsManager : MonoBehaviour {
     private static void saveString(string key, string value) {
         PlayerPrefs.SetString(key, value);
     }
+
+}
+
+[System.Serializable]
+class SaveData {
+    // TODO: BinaryFormatter is not flexible.
+    // find a way to save/load this glob of data that can handle changes in object definition (e.g. adding new fields).
+    // consider formatting as a JSON string, wrapping in a class, and serializing that class..?
+
+    // player stats
+    private int highscore;
+    private float averageScore;
+    private int gamesPlayed;
+    private int goldAmount;
+
+    // settings
+    private bool isHardModeOn;
+    private bool isColorblindModeOn;
+    private int colorSchemeID;
+    private bool isSmoothMovementOn;
+    private bool isMusicOn;
+    private bool isSoundEffectsOn;
+
+    // store data
+    private int numBoughtExtraLife;
+    private int numBoughtNoAdsTemp;
+    private int numBoughtResetAverage;
+    private bool boughtHardMode;
+    private bool boughtColorsPasFru;
+    private bool boughtColorsWarCoo;
+    private bool boughtColorsMidWhi;
+    private bool boughtColorsRgbCmy;
+    private bool boughtBraggingRights;
 
 }
