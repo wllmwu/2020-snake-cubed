@@ -108,6 +108,8 @@ public class GameEnder : StateChangeListener {
 
         this.gold = GameStateManager.getGoldAmount();
         DataAndSettingsManager.setGoldAmount(this.gold);
+
+        DataAndSettingsManager.writeData();
     }
 
     private void displayData() {

@@ -27,6 +27,7 @@ public static class DataAndSettingsManager {
     private static Dictionary<string, float> floatData = new Dictionary<string, float>();
     private static Dictionary<string, bool> boolData = new Dictionary<string, bool>();
     private static Dictionary<string, string> stringData = new Dictionary<string, string>();
+    private static bool didLoad;
     private static bool changedSinceLastWrite;
 
     public delegate void SetColorblindMode(bool isOn);
@@ -84,22 +85,28 @@ public static class DataAndSettingsManager {
         setGamesPlayed(0);
     }
 
+    ///<summary>Reads game data from disk storage and loads it into memory, if this hasn't been done already.</summary>
     public static void loadData() {
-        string path = Application.persistentDataPath + SAVE_PATH;
-        if (File.Exists(path)) {
-            BinaryFormatter formatter = new BinaryFormatter();
-            FileStream stream = new FileStream(path, FileMode.Open);
-            SaveData load = formatter.Deserialize(stream) as SaveData;
-            if (load != null) {
-                intData = load.getIntData();
-                floatData = load.getFloatData();
-                boolData = load.getBoolData();
-                stringData = load.getStringData();
+        if (!didLoad) {
+            string path = Application.persistentDataPath + SAVE_PATH;
+            if (File.Exists(path)) {
+                BinaryFormatter formatter = new BinaryFormatter();
+                FileStream stream = new FileStream(path, FileMode.Open);
+                SaveData load = formatter.Deserialize(stream) as SaveData;
+                if (load != null) {
+                    intData = load.getIntData();
+                    floatData = load.getFloatData();
+                    boolData = load.getBoolData();
+                    stringData = load.getStringData();
+                }
+                stream.Close();
+                changedSinceLastWrite = false;
             }
-            stream.Close();
         }
+        didLoad = true;
     }
 
+    ///<summary>Writes current game data to disk storage, if changes were made since the last time data was written.</summary>
     public static void writeData() {
         if (changedSinceLastWrite) {
             BinaryFormatter formatter = new BinaryFormatter();
@@ -109,7 +116,7 @@ public static class DataAndSettingsManager {
             formatter.Serialize(stream, save);
             stream.Close();
         }
-        
+        changedSinceLastWrite = false;
     }
 
     // UNUSED
@@ -157,8 +164,6 @@ public static class DataAndSettingsManager {
 
     /* * * * Private save/retrieve functions * * * */
 
-    // TODO: add calls to loadData and writeData in appropriate places, and make sure this all works
-
     private static int retrieveInt(string key, int defaultValue) {
         int value;
         if (intData.TryGetValue(key, out value)) {
@@ -169,6 +174,7 @@ public static class DataAndSettingsManager {
     }
     private static void saveInt(string key, int value) {
         intData[key] = value;
+        changedSinceLastWrite = true;
         //PlayerPrefs.SetInt(key, value);
     }
 
@@ -182,6 +188,7 @@ public static class DataAndSettingsManager {
     }
     private static void saveFloat(string key, float value) {
         floatData[key] = value;
+        changedSinceLastWrite = true;
         //PlayerPrefs.SetFloat(key, value);
     }
 
@@ -195,6 +202,7 @@ public static class DataAndSettingsManager {
     }
     private static void saveBool(string key, bool value) {
         boolData[key] = value;
+        changedSinceLastWrite = true;
         //PlayerPrefs.SetInt(key, value ? 1 : 0);
     }
 
@@ -218,6 +226,7 @@ public static class DataAndSettingsManager {
     }
     private static void saveString(string key, string value) {
         stringData[key] = value;
+        changedSinceLastWrite = true;
         //PlayerPrefs.SetString(key, value);
     }
 
@@ -226,6 +235,7 @@ public static class DataAndSettingsManager {
 [System.Serializable]
 class SaveData {
 
+    // WARNING: do not change this class definition unless you make the BinaryFormatter deserialization handle the difference
     [SerializeField]
     private Dictionary<string, int> intData;
     [SerializeField]

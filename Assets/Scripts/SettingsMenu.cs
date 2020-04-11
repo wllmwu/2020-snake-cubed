@@ -13,14 +13,6 @@ public class SettingsMenu : MonoBehaviour {
     public Toggle musicToggle;
     public Toggle soundsToggle;
 
-    // Start is called before the first frame update
-    void Start() {
-    }
-
-    // Update is called once per frame
-    void Update() {
-    }
-
     void OnEnable() {
         this.closeColorSchemeListAction(); // switch to the correct panel
         this.colorblindModeToggle.isOn = DataAndSettingsManager.getColorblindModeState();

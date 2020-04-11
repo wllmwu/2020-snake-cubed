@@ -34,7 +34,15 @@ public class GameStateManager : MonoBehaviour {
         onInitialize();
     }
 
+    void OnApplicationPause(bool pauseStatus) {
+        // this method is called when the app is soft-closed on iOS and Android
+        if (pauseStatus) {
+            DataAndSettingsManager.writeData();
+        }
+    }
+
     void OnDestroy() {
+        DataAndSettingsManager.writeData();
     }
 
     /* * * * Public getters * * * */

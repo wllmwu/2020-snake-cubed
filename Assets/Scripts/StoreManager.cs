@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StoreManager : MonoBehaviour {
+public static class StoreManager {
 
     /* * * * Names of expendable items * * * */
     public static readonly string ITEM_KEY_EXTRA_LIFE = "store.1up";

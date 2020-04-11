@@ -8,7 +8,6 @@ public class IAPManager : MonoBehaviour, IStoreListener {
 
     private static IStoreController storeController;
     private static IExtensionProvider storeExtensionProvider;
-    private static IAPManager instance;
 
     public static readonly string ITEM_KEY_IAP_100_GOLD = "iap.100gold";
     public static readonly string ITEM_KEY_IAP_NO_ADS = "iap.noadsperm";
@@ -24,7 +23,6 @@ public class IAPManager : MonoBehaviour, IStoreListener {
     /* * * * Lifecycle methods * * * */
 
     void Start() {
-        instance = this;
         if (storeController == null) {
             this.initializePurchasing();
         }
@@ -61,7 +59,7 @@ public class IAPManager : MonoBehaviour, IStoreListener {
     public static bool shouldShowAds() {
         if (storeIsInitialized()) {
             // if this nonconsumable doesn't have a receipt, then it hasn't been purchased yet, so show ads
-            return !storeController.products.WithID(PRODUCT_ID_NO_ADS).hasReceipt;
+            return !storeController.products.WithID(PRODUCT_ID_NO_ADS).hasReceipt; // TODO: use validateReceipt() instead
         }
         return true;
     }

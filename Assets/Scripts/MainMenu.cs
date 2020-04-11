@@ -29,6 +29,10 @@ public class MainMenu : MonoBehaviour {
 
     /* * * * Lifecycle methods * * * */
 
+    void Awake() {
+        DataAndSettingsManager.loadData();
+    }
+
     // Start is called before the first frame update
     void Start() {
         this.menuCubes = new List<GameObject>();
@@ -43,6 +47,17 @@ public class MainMenu : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         this.moveCubes();
+    }
+
+    void OnApplicationPause(bool pauseStatus) {
+        // this method is called when the app is soft-closed on iOS and Android
+        if (pauseStatus) {
+            DataAndSettingsManager.writeData();
+        }
+    }
+
+    void OnDestroy() {
+        DataAndSettingsManager.writeData();
     }
 
     /* * * * UI actions * * * */
