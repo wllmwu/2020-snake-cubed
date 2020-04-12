@@ -8,15 +8,9 @@ public class StylizedToggle : MonoBehaviour {
     public Texture normalOnTexture;
     public Texture colorblindOnTexture;
 
-    // Start is called before the first frame update
-    void Start() {
-    }
-    // Update is called once per frame
-    void Update() {
-    }
-
     void OnEnable() {
         DataAndSettingsManager.OnToggleColorblindMode += this.setColorblindMode;
+        this.setColorblindMode(DataAndSettingsManager.getColorblindModeState());
     }
     void OnDisable() {
         DataAndSettingsManager.OnToggleColorblindMode -= this.setColorblindMode;

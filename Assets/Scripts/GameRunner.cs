@@ -33,7 +33,7 @@ public class GameRunner : StateChangeListener {
     private int score;
     private int goldAmount;
     private bool isHardMode;
-    private static readonly float DEFAULT_TIME_INTERVAL = 0.45f;
+    private static readonly float DEFAULT_TIME_INTERVAL = 0.4f;
     private static readonly float SLOW_TIME_INTERVAL = 1f;
     private static readonly float FAST_TIME_INTERVAL = 0.25f;
     private float timeInterval;

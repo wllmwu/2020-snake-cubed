@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ColorSchemesManager {
+public static class ColorSchemesManager {
 
     private static Material boundsMaterial;
     private static Material snakeMaterial;

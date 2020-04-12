@@ -30,6 +30,9 @@ public class MainMenu : MonoBehaviour {
     /* * * * Lifecycle methods * * * */
 
     void Awake() {
+        #if UNITY_IOS
+        System.Environment.SetEnvironmentVariable("MONO_REFLECTION_SERIALIZER", "yes");
+        #endif
         DataAndSettingsManager.loadData();
     }
 
