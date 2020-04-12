@@ -20,6 +20,10 @@ public class IAPManager : MonoBehaviour, IStoreListener {
 
     public StoreMenu storeMenu;
 
+    #if UNITY_IOS
+    private static string appReceipt;
+    #endif
+
     /* * * * Lifecycle methods * * * */
 
     void Start() {
@@ -56,10 +60,19 @@ public class IAPManager : MonoBehaviour, IStoreListener {
 
     /* * * * Product-specific methods * * * */
 
+    ///<summary>Returns whether interstitial ads should be shown, based on whether the user has bought the permanent no-ads product.
+    /// If this cannot be determined, defaults to yes. Should also check whether the user has bought temporary no-ads items.</summary>
     public static bool shouldShowAds() {
         if (storeIsInitialized()) {
-            // if this nonconsumable doesn't have a receipt, then it hasn't been purchased yet, so show ads
-            return !storeController.products.WithID(PRODUCT_ID_NO_ADS).hasReceipt; // TODO: use validateReceipt() instead
+            // if this nonconsumable doesn't have a (valid) receipt, then it hasn't been purchased yet, so show ads
+            #if UNITY_IOS
+            return !validateReceipt(appReceipt, PRODUCT_ID_NO_ADS);
+            #elif UNITY_ANDROID
+            string receipt = storeController.products.WithID(PRODUCT_ID_NO_ADS).receipt;
+            return (!String.IsNullOrEmpty(receipt) && validateReceipt(receipt, PRODUCT_ID_NO_ADS));
+            #else
+            return !storeController.products.WithID(PRODUCT_ID_NO_ADS).hasReceipt;
+            #endif
         }
         return true;
     }
@@ -75,6 +88,9 @@ public class IAPManager : MonoBehaviour, IStoreListener {
             return; // already initialized
         }
         var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
+        #if UNITY_IOS
+        appReceipt = builder.Configure<IAppleConfiguration>().appReceipt;
+        #endif
         builder.AddProduct(PRODUCT_ID_100_GOLD, ProductType.Consumable);
         builder.AddProduct(PRODUCT_ID_NO_ADS, ProductType.NonConsumable);
         UnityPurchasing.Initialize(this, builder); // will receive a callback to either OnInitialized or OnInitializeFailed
@@ -82,13 +98,13 @@ public class IAPManager : MonoBehaviour, IStoreListener {
 
     ///<summary>Returns whether the given IAP receipt a) is a valid receipt and b) contains the given product ID.
     /// IMPORTANT: Only call this method when running on iOS or Android. Otherwise, perhaps assume the receipt is valid.</summary>
-    private bool validateReceipt(string receipt, string intendedProductID) {
+    private static bool validateReceipt(string receipt, string intendedProductID) {
         var validator = new CrossPlatformValidator(GooglePlayTangle.Data(), AppleTangle.Data(), Application.identifier);
         try {
             var result = validator.Validate(receipt); // checks whether the receipt is valid, throws if not
             bool foundMatch = false;
             foreach (IPurchaseReceipt productReceipt in result) {
-                // user may provide a valid receipt from somewhere else, so look for the ID of the intended product
+                // user may provide a "valid" receipt from somewhere else, so look for the ID of the intended product
                 if (productReceipt.productID.Equals(intendedProductID)) {
                     foundMatch = true;
                     break;
@@ -124,7 +140,7 @@ public class IAPManager : MonoBehaviour, IStoreListener {
         bool validPurchase = true;
         string purchasedProductID = args.purchasedProduct.definition.id;
         #if UNITY_IOS || UNITY_ANDROID
-        validPurchase = this.validateReceipt(args.purchasedProduct.receipt, purchasedProductID);
+        validPurchase = validateReceipt(args.purchasedProduct.receipt, purchasedProductID);
         #endif
         if (validPurchase) {
             if (purchasedProductID.Equals(PRODUCT_ID_100_GOLD)) {
@@ -132,9 +148,7 @@ public class IAPManager : MonoBehaviour, IStoreListener {
                 DataAndSettingsManager.setGoldAmount(gold + 100);
                 storeMenu.updateGoldLabel();
             }
-            else if (purchasedProductID.Equals(PRODUCT_ID_NO_ADS)) {
-                // TODO probably nothing
-            }
+            // no action needed for the no-ads product
             FindObjectOfType<AlertPrompt>().showMessage("Purchase successful!");
         }
         else {
@@ -145,7 +159,8 @@ public class IAPManager : MonoBehaviour, IStoreListener {
 
     public void OnPurchaseFailed(Product product, PurchaseFailureReason error) {
         Debug.Log("purchase failed: " + error);
-        FindObjectOfType<AlertPrompt>().showMessage("An error occurred while processing the purchase. Check if in-app purchases are allowed in the Settings app.");
+        FindObjectOfType<AlertPrompt>().showMessage("An error occurred while processing the purchase. " +
+            "Make sure in-app purchases are allowed in your device settings.");
     }
 
 }

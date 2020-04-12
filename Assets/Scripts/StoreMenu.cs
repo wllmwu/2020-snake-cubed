@@ -86,7 +86,7 @@ public class StoreMenu : MonoBehaviour {
         }
         else {
             // change message
-            this.iapLoadingLabel.text = "Currently unavailable";
+            this.iapLoadingLabel.text = "Currently unavailable. In-app purchases might be disabled in your device settings.";
         }
     }
 

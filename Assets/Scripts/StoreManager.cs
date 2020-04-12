@@ -99,6 +99,16 @@ public static class StoreManager {
         }
     }
 
+    /* * * * Item-specific methods * * * */
+
+    ///<summary>Returns whether interstitial ads should be shown, based on whether the temporary no-ads item is active.
+    /// Should also check whether the user has bought the permanent no-ads IAP.</summary>
+    public static bool shouldShowAds() {
+        DateTime expiration = DataAndSettingsManager.getExpirationDateForStoreItem(ITEM_KEY_NO_ADS_TEMPORARY);
+        DateTime now = DateTime.Now;
+        return (expiration.CompareTo(now) < 0);
+    }
+
 }
 
 ///<summary>A class to organize information about store items.</summary>
