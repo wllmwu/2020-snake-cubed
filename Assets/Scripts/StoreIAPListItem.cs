@@ -14,7 +14,6 @@ public class StoreIAPListItem : MonoBehaviour {
 
     private string productID;
     private bool isConsumable;
-    private bool hasReceipt;
 
     /* * * * Public methods * * * */
 
@@ -25,7 +24,6 @@ public class StoreIAPListItem : MonoBehaviour {
         this.descriptionLabel.text = product.metadata.localizedDescription;
         this.costLabel.text = product.metadata.localizedPriceString;
         this.isConsumable = (product.definition.type == ProductType.Consumable);
-        this.hasReceipt = product.hasReceipt;
         this.updateButton();
     }
 
@@ -39,7 +37,7 @@ public class StoreIAPListItem : MonoBehaviour {
     /* * * * Helper methods * * * */
 
     private void updateButton() {
-        this.buyButton.interactable = (this.isConsumable || !this.hasReceipt);
+        this.buyButton.interactable = (this.isConsumable || !IAPManager.hasPurchasedNonconsumable(this.productID));
     }
 
 }

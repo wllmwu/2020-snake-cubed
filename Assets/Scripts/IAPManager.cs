@@ -9,8 +9,8 @@ public class IAPManager : MonoBehaviour, IStoreListener {
     private static IStoreController storeController;
     private static IExtensionProvider storeExtensionProvider;
 
-    public static readonly string ITEM_KEY_IAP_100_GOLD = "iap.100gold";
-    public static readonly string ITEM_KEY_IAP_NO_ADS = "iap.noadsperm";
+    //public static readonly string ITEM_KEY_IAP_100_GOLD = "iap.100gold";
+    //public static readonly string ITEM_KEY_IAP_NO_ADS = "iap.noadsperm";
     private static readonly string PRODUCT_ID_100_GOLD = "com.williamwu.scubed.100gold";
     private static readonly string PRODUCT_ID_NO_ADS = "com.williamwu.scubed.noads";
     private static readonly string[] IAP_PRODUCT_IDS = {
@@ -58,23 +58,29 @@ public class IAPManager : MonoBehaviour, IStoreListener {
         }
     }
 
+    // TODO: add a way to restore purchases, add static flags for validated receipts so we don't have to check multiple times?
+
+    ///<summary>Returns whether the specified nonconsumable product has been purchased by the user.</summary>
+    public static bool hasPurchasedNonconsumable(string productID) {
+        if (storeIsInitialized()) {
+            #if UNITY_IOS
+            return validateReceipt(appReceipt, productID);
+            #elif UNITY_ANDROID
+            string receipt = storeController.products.WithID(productID).receipt;
+            return (!String.IsNullOrEmpty(receipt) && validateReceipt(receipt, productID));
+            #else
+            return storeController.products.WithID(productID).hasReceipt;
+            #endif
+        }
+        return false;
+    }
+
     /* * * * Product-specific methods * * * */
 
     ///<summary>Returns whether interstitial ads should be shown, based on whether the user has bought the permanent no-ads product.
     /// If this cannot be determined, defaults to yes. Should also check whether the user has bought temporary no-ads items.</summary>
     public static bool shouldShowAds() {
-        if (storeIsInitialized()) {
-            // if this nonconsumable doesn't have a (valid) receipt, then it hasn't been purchased yet, so show ads
-            #if UNITY_IOS
-            return !validateReceipt(appReceipt, PRODUCT_ID_NO_ADS);
-            #elif UNITY_ANDROID
-            string receipt = storeController.products.WithID(PRODUCT_ID_NO_ADS).receipt;
-            return (!String.IsNullOrEmpty(receipt) && validateReceipt(receipt, PRODUCT_ID_NO_ADS));
-            #else
-            return !storeController.products.WithID(PRODUCT_ID_NO_ADS).hasReceipt;
-            #endif
-        }
-        return true;
+        return !hasPurchasedNonconsumable(PRODUCT_ID_NO_ADS);
     }
 
     /* * * * Private methods * * * */
@@ -89,7 +95,7 @@ public class IAPManager : MonoBehaviour, IStoreListener {
         }
         var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
         #if UNITY_IOS
-        appReceipt = builder.Configure<IAppleConfiguration>().appReceipt;
+        appReceipt = formatAppleReceiptForUnity(builder.Configure<IAppleConfiguration>().appReceipt); // configuration gives raw Apple receipt
         #endif
         builder.AddProduct(PRODUCT_ID_100_GOLD, ProductType.Consumable);
         builder.AddProduct(PRODUCT_ID_NO_ADS, ProductType.NonConsumable);
@@ -97,6 +103,7 @@ public class IAPManager : MonoBehaviour, IStoreListener {
     }
 
     ///<summary>Returns whether the given IAP receipt a) is a valid receipt and b) contains the given product ID.
+    /// The receipt string must be formatted as a Unity IAP receipt--use `formatReceiptForUnity()` if it is not.
     /// IMPORTANT: Only call this method when running on iOS or Android. Otherwise, perhaps assume the receipt is valid.</summary>
     private static bool validateReceipt(string receipt, string intendedProductID) {
         var validator = new CrossPlatformValidator(GooglePlayTangle.Data(), AppleTangle.Data(), Application.identifier);
@@ -120,6 +127,10 @@ public class IAPManager : MonoBehaviour, IStoreListener {
             Debug.Log("something bad happened while validating receipt");
             return false;
         }
+    }
+
+    private static string formatAppleReceiptForUnity(string receipt) {
+        return "{\"Store\":\"AppleAppStore\",\"Payload\":\"" + receipt + "\"}";
     }
 
     /* * * * IStoreListener delegate methods * * * */
@@ -148,7 +159,12 @@ public class IAPManager : MonoBehaviour, IStoreListener {
                 DataAndSettingsManager.setGoldAmount(gold + 100);
                 storeMenu.updateGoldLabel();
             }
-            // no action needed for the no-ads product
+            else {
+                #if UNITY_IOS
+                // update our copy of the unified iOS receipt
+                appReceipt = args.purchasedProduct.receipt; // should already be formatted for Unity
+                #endif
+            }
             FindObjectOfType<AlertPrompt>().showMessage("Purchase successful!");
         }
         else {
