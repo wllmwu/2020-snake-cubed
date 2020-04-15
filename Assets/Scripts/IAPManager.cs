@@ -58,7 +58,20 @@ public class IAPManager : MonoBehaviour, IStoreListener {
         }
     }
 
-    // TODO: add a way to restore purchases, add static flags for validated receipts so we don't have to check multiple times?
+    public static void restorePurchases() { // TODO: remove the button when building for non-iOS
+        #if UNITY_IOS
+        storeExtensionProvider.GetExtension<IAppleExtensions>().RestoreTransactions(result => {
+            if (result) { // restoration process succeeded - doesn't necessarily mean anything was changed
+                FindObjectOfType<AlertPrompt>().showMessage("Restoration succeeded. If you previously paid for any nonconsumable " +
+                    "in-app purchases, they should now be active.");
+            }
+            else {
+                FindObjectOfType<AlertPrompt>().showMessage("Restoration failed. " +
+                    "Make sure in-app purchases are allowed in your device settings.");
+            }
+        });
+        #endif
+    }
 
     ///<summary>Returns whether the specified nonconsumable product has been purchased by the user.</summary>
     public static bool hasPurchasedNonconsumable(string productID) {
@@ -165,7 +178,7 @@ public class IAPManager : MonoBehaviour, IStoreListener {
                 appReceipt = args.purchasedProduct.receipt; // should already be formatted for Unity
                 #endif
             }
-            FindObjectOfType<AlertPrompt>().showMessage("Purchase successful!");
+            FindObjectOfType<AlertPrompt>().showMessage("Purchase succeeded!");
         }
         else {
             FindObjectOfType<AlertPrompt>().showMessage("Purchase failed validation.");

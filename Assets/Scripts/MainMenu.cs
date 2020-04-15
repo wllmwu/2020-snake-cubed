@@ -109,6 +109,10 @@ public class MainMenu : MonoBehaviour {
         Application.OpenURL("https://www.zapsplat.com/");
     }
 
+    public void restorePurchasesAction() {
+        IAPManager.restorePurchases();
+    }
+
     /* * * * Animated background cubes * * * */
 
     ///<summary>Instantiates a new menu cube at a random placement along the starting line every `this.timeInterval` seconds.</summary>
