@@ -11,6 +11,8 @@ public class GameEnder : StateChangeListener {
     private int scoreBeforeRevive;
     private int highscore;
     private float averageScore;
+    private int apples;
+    private int appleAdditionBeforeRevive;
     private int gold;
     private int appleAddition;
     private bool isHardMode;
@@ -49,6 +51,7 @@ public class GameEnder : StateChangeListener {
         else {
             if (newState == GameState.WaitingToStart) {
                 this.scoreBeforeRevive = 0;
+                this.appleAdditionBeforeRevive = 0;
             }
             this.enabled = false;
         }
@@ -100,13 +103,15 @@ public class GameEnder : StateChangeListener {
         }
 
         this.gold = GameStateManager.getGoldAmount();
-        this.appleAddition = (this.score - this.scoreBeforeRevive) / 2;
+        this.apples = GameStateManager.getApples();
         this.isHardMode = DataAndSettingsManager.getHardModeState();
+        int appleAddition = this.apples / 2;
         if (this.isHardMode) {
-            this.appleAddition = (int)(this.appleAddition * 1.5);
+            appleAddition = (int)(appleAddition * 1.5);
         }
-        this.gold += this.appleAddition;
+        this.gold += appleAddition - this.appleAdditionBeforeRevive;
         DataAndSettingsManager.setGoldAmount(this.gold);
+        this.appleAdditionBeforeRevive = appleAddition;
 
         float average = DataAndSettingsManager.getAverageScore();
         int numGames = DataAndSettingsManager.getGamesPlayed();
@@ -117,7 +122,6 @@ public class GameEnder : StateChangeListener {
             average = (average * numGames + this.score) / (numGames + 1);
             DataAndSettingsManager.setGamesPlayed(numGames + 1);
         }
-        //average = (average * numGames + (this.score - this.scoreBeforeRevive)) / (numGames + 1);
         this.averageScore = average;
         DataAndSettingsManager.setAverageScore(average);
         this.scoreBeforeRevive = this.score;
@@ -131,10 +135,10 @@ public class GameEnder : StateChangeListener {
         this.endAverageScoreLabel.text = "Average: " + this.averageScore.ToString("F2"); // two digits after the decimal
         this.endGoldLabel.text = "Gold: " + this.gold;
         if (this.isHardMode) {
-            this.appleGoldLabel.text = "+ 1.5\u00d7" + this.appleAddition;
+            this.appleGoldLabel.text = "+ 1.5\u00d7" + (this.apples / 2);
         }
         else {
-            this.appleGoldLabel.text = "+ " + this.appleAddition;
+            this.appleGoldLabel.text = "+ " + (this.apples / 2);
         }
     }
 

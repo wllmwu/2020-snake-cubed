@@ -51,6 +51,7 @@ public class GameStateManager : MonoBehaviour {
     public static GameState getPreviousState() { return previousState; }
 
     public static int getScore() { return gameRunner.getScore(); }
+    public static int getApples() { return gameRunner.getApples(); }
     public static int getGoldAmount() { return gameRunner.getGoldAmount(); }
     public static bool canRevive() { return gameRunner.canRevive(); }
 

@@ -31,6 +31,7 @@ public class GameRunner : StateChangeListener {
     private GameObject boundingBox;
     private Snake snake;
     private int score;
+    private int applesCollected;
     private int goldAmount;
     private bool isHardMode;
     private static readonly float DEFAULT_TIME_INTERVAL = 0.4f;
@@ -72,6 +73,7 @@ public class GameRunner : StateChangeListener {
     /* * * * Public getters * * * */
 
     public int getScore() { return this.score; }
+    public int getApples() { return this.applesCollected; }
     public int getGoldAmount() { return this.goldAmount; }
 
     public bool canRevive() {
@@ -147,9 +149,10 @@ public class GameRunner : StateChangeListener {
         this.space[3,2,2] = SPACE_SNAKE;
         this.space[4,2,2] = SPACE_SNAKE;
         this.score = 0;
+        this.applesCollected = 0;
         this.goldAmount = DataAndSettingsManager.getGoldAmount();
         this.isHardMode = DataAndSettingsManager.getHardModeState();
-        this.timeInterval = this.isHardMode ? FAST_TIME_INTERVAL : DEFAULT_TIME_INTERVAL;
+        //this.timeInterval = this.isHardMode ? FAST_TIME_INTERVAL : DEFAULT_TIME_INTERVAL;
         this.numBads = this.isHardMode ? 10 : 5;
         this.isPaused = false;
 
@@ -189,13 +192,16 @@ public class GameRunner : StateChangeListener {
         int[] next = this.snake.nextMove();
         while (this.validMove(next)) {
             if (this.aboutToEatApple(next) && this.shouldGrow()) {
-                this.snake.grow(this.timeInterval, DataAndSettingsManager.getSmoothMovementState());
+                //this.snake.grow(this.timeInterval, DataAndSettingsManager.getSmoothMovementState());
+                this.snake.grow(this.timeInterval(), DataAndSettingsManager.getSmoothMovementState());
             }
             else {
-                int[] old = this.snake.move(this.timeInterval, DataAndSettingsManager.getSmoothMovementState());
+                //int[] old = this.snake.move(this.timeInterval, DataAndSettingsManager.getSmoothMovementState());
+                int[] old = this.snake.move(this.timeInterval(), DataAndSettingsManager.getSmoothMovementState());
                 this.setValueAtCoordinates(old, SPACE_EMPTY);
             }
-            yield return StartCoroutine(this.pausableWait(this.timeInterval)); // the player may pause during this time
+            //yield return StartCoroutine(this.pausableWait(this.timeInterval)); // the player may pause during this time
+            yield return StartCoroutine(this.pausableWait(this.timeInterval())); // the player may pause during this time
 
             this.lookForApples(next);
             this.setValueAtCoordinates(next, SPACE_SNAKE);
@@ -227,11 +233,10 @@ public class GameRunner : StateChangeListener {
         foreach (Cube bad in this.bads) {
             this.removeBad(bad);
         }
-        //this.removeBad();
-        this.timeInterval = SLOW_TIME_INTERVAL; // first (randomly chosen) move is slower
+        //this.timeInterval = SLOW_TIME_INTERVAL; // first (randomly chosen) move is slower
         this.isReviving = true;
         this.actuallyStartGameAction();
-        this.timeInterval = this.isHardMode ? FAST_TIME_INTERVAL : DEFAULT_TIME_INTERVAL;
+        //this.timeInterval = this.isHardMode ? FAST_TIME_INTERVAL : DEFAULT_TIME_INTERVAL;
         this.isReviving = false;
     }
 
@@ -380,6 +385,7 @@ public class GameRunner : StateChangeListener {
             this.showPointsFeedback(this.apple.gameObject.transform.position, SPACE_APPLE);
             this.apple.gameObject.SetActive(false);
             this.score += 1;
+            this.applesCollected++;
             this.generateApple(); // will be regenerated immediately
         }
         else if (value == SPACE_GOLD) {
@@ -489,6 +495,19 @@ public class GameRunner : StateChangeListener {
     private bool shouldGrow() {
         int length = this.snake.getLength();
         return (length <= 12) || (Random.Range(1, 41) > length);
+    }
+
+    // TODO: test apple gold conversion, test this time interval stuff
+    private float timeInterval() {
+        if (this.isReviving) {
+            return SLOW_TIME_INTERVAL;
+        }
+        else if (this.isHardMode || this.applesCollected >= 45) {
+            return FAST_TIME_INTERVAL;
+        }
+        else {
+            return DEFAULT_TIME_INTERVAL - ((this.applesCollected % 15) * 0.05f);
+        }
     }
 
     ///<summary>A helper coroutine that functions the same as `yield return new WaitForSeconds(waitTime);`, but also respects the game's pause state. Usage: `yield return StartCoroutine(this.pausableWait(waitTime));`.</summary>
