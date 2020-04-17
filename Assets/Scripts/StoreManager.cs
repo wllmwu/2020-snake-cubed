@@ -24,7 +24,7 @@ public static class StoreManager {
         new StoreItem(ITEM_KEY_NO_ADS_TEMPORARY, "No ads for 24 hours", 10, "Activate immediately (they stack).", 24),
         new StoreItem(ITEM_KEY_RESET_AVERAGE, "Reset average", 25, "Reset from the Stats menu."),
         // unlockables
-        new StoreItem(ITEM_KEY_HARD_MODE, "Hard mode", 40, "Toggle when starting a game."),
+        new StoreItem(ITEM_KEY_HARD_MODE, "Hard mode", 40, "Toggle when starting a game. Includes a gold boost."),
         new StoreItem(ITEM_KEY_COLORS_PAS_FRU, "Pastel & Fruit", 50, "Find these new color schemes in Settings."),
         new StoreItem(ITEM_KEY_COLORS_WAR_COO, "Warm & Cool", 50, "Find these new color schemes in Settings."),
         new StoreItem(ITEM_KEY_COLORS_MID_WHI, "Midnight & Whiteout", 50, "Find these new color schemes in Settings."),

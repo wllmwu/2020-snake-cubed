@@ -69,10 +69,6 @@ public class GameRunner : StateChangeListener {
         }
     }
 
-    // Update is called once per frame
-    void Update() {
-    }
-
     /* * * * Public getters * * * */
 
     public int getScore() { return this.score; }
