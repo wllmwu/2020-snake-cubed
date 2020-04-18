@@ -79,6 +79,7 @@ public class MainMenu : MonoBehaviour {
     ///<summary>This method is linked to the Stats button on the canvas.</summary>
     public void openStatsAction() {
         this.deactivateAllPanels();
+        this.updateStatsMenu();
         this.statsPanel.SetActive(true);
     }
 

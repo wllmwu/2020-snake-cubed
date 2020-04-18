@@ -11,10 +11,9 @@ public class GameEnder : StateChangeListener {
     private int scoreBeforeRevive;
     private int highscore;
     private float averageScore;
-    private int apples;
-    private int appleAdditionBeforeRevive;
     private int gold;
-    private int appleAddition;
+    private int goldFromApples;
+    private int goldFromApplesBeforeRevive;
     private bool isHardMode;
     private int consecutiveRounds;
     private int consecutiveRevivals;
@@ -51,7 +50,7 @@ public class GameEnder : StateChangeListener {
         else {
             if (newState == GameState.WaitingToStart) {
                 this.scoreBeforeRevive = 0;
-                this.appleAdditionBeforeRevive = 0;
+                this.goldFromApplesBeforeRevive = 0;
             }
             this.enabled = false;
         }
@@ -103,15 +102,15 @@ public class GameEnder : StateChangeListener {
         }
 
         this.gold = GameStateManager.getGoldAmount();
-        this.apples = GameStateManager.getApples();
         this.isHardMode = DataAndSettingsManager.getHardModeState();
-        int appleAddition = this.apples / 2;
+        this.goldFromApples = GameStateManager.getApples() / 2 - this.goldFromApplesBeforeRevive;
+        int addition = this.goldFromApples;
         if (this.isHardMode) {
-            appleAddition = (int)(appleAddition * 1.5);
+            addition = (int)(addition * 1.5);
         }
-        this.gold += appleAddition - this.appleAdditionBeforeRevive;
+        this.gold += addition;
         DataAndSettingsManager.setGoldAmount(this.gold);
-        this.appleAdditionBeforeRevive = appleAddition;
+        this.goldFromApplesBeforeRevive += this.goldFromApples;
 
         float average = DataAndSettingsManager.getAverageScore();
         int numGames = DataAndSettingsManager.getGamesPlayed();
@@ -135,10 +134,10 @@ public class GameEnder : StateChangeListener {
         this.endAverageScoreLabel.text = "Average: " + this.averageScore.ToString("F2"); // two digits after the decimal
         this.endGoldLabel.text = "Gold: " + this.gold;
         if (this.isHardMode) {
-            this.appleGoldLabel.text = "+ 1.5\u00d7" + (this.apples / 2);
+            this.appleGoldLabel.text = "+ 1.5\u00d7" + (this.goldFromApples);
         }
         else {
-            this.appleGoldLabel.text = "+ " + (this.apples / 2);
+            this.appleGoldLabel.text = "+ " + (this.goldFromApples);
         }
     }
 
