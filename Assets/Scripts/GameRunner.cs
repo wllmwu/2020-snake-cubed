@@ -37,13 +37,12 @@ public class GameRunner : StateChangeListener {
     private static readonly float DEFAULT_TIME_INTERVAL = 0.4f;
     private static readonly float SLOW_TIME_INTERVAL = 1f;
     private static readonly float FAST_TIME_INTERVAL = 0.25f;
-    private int numBads;
     private bool isPaused;
     private bool isReviving;
     private Cube apple;
     private Cube gold;
     private List<Cube> bads;
-    private List<IEnumerator> badCoroutines = new List<IEnumerator>();
+    private List<IEnumerator> badCoroutines;
 
     public GameObject mainCamera;
     public Text scoreLabel;
@@ -150,7 +149,6 @@ public class GameRunner : StateChangeListener {
         this.applesCollected = 0;
         this.goldAmount = DataAndSettingsManager.getGoldAmount();
         this.isHardMode = DataAndSettingsManager.getHardModeState();
-        this.numBads = this.isHardMode ? 10 : 5;
         this.isPaused = false;
 
         this.generateApple();
@@ -232,7 +230,7 @@ public class GameRunner : StateChangeListener {
         this.isReviving = false;
     }
 
-    /* * * * Initializing, generating, destroying objects * * * */
+    /* * * * Initializing, generating, and destroying objects * * * */
 
     private void initializeObjects() {
         //Debug.Log("initialize objects");
@@ -253,11 +251,13 @@ public class GameRunner : StateChangeListener {
         this.gold = Instantiate(this.goldPrefab, originPosition + new Vector3(-1, -1, -1), originRotation, originTransform) as Cube;
         this.gold.gameObject.SetActive(false);
         this.bads = new List<Cube>();
-        for (int i = 0; i < this.numBads; i++) {
+        int numBads = this.isHardMode ? 10 : 5;
+        for (int i = 0; i < numBads; i++) {
             Cube bad = Instantiate(this.badPrefab, originPosition + new Vector3(-1, -1, -1), originRotation, originTransform) as Cube;
             this.bads.Add(bad);
             bad.gameObject.SetActive(false);
         }
+        this.badCoroutines = new List<IEnumerator>();
     }
 
     private void generateApple() {
@@ -340,6 +340,8 @@ public class GameRunner : StateChangeListener {
                 Destroy(bad.gameObject);
                 //Debug.Log("7");
             }
+            this.bads.Clear();
+            this.badCoroutines.Clear();
         }
     }
 
