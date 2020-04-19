@@ -16,7 +16,6 @@ public class StoreMenu : MonoBehaviour {
     private static readonly float LIST_ITEM_HEIGHT = 180f;
     private static readonly float LIST_TITLE_HEIGHT = 80f;
 
-    // Start is called before the first frame update
     void Start() {
         this.setupList();
     }

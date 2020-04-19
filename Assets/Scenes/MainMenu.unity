@@ -729,6 +729,7 @@ GameObject:
   - component: {fileID: 256885516}
   - component: {fileID: 256885515}
   - component: {fileID: 256885519}
+  - component: {fileID: 256885520}
   m_Layer: 5
   m_Name: Main Menu Canvas
   m_TagString: Untagged
@@ -847,6 +848,19 @@ MonoBehaviour:
   menuCubePrefab: {fileID: 7803837588809793673, guid: 71af8a9bbf1414ae38fcaf6c341dfb54,
     type: 3}
   crownImage: {fileID: 1909681408}
+--- !u!114 &256885520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 256885514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a834322528004b48ad496bfa64e0b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  storeMenu: {fileID: 1263959407}
 --- !u!1 &306255286
 GameObject:
   m_ObjectHideFlags: 0
@@ -3211,7 +3225,6 @@ GameObject:
   - component: {fileID: 1263959409}
   - component: {fileID: 1263959408}
   - component: {fileID: 1263959407}
-  - component: {fileID: 1263959411}
   m_Layer: 5
   m_Name: Store panel
   m_TagString: Untagged
@@ -3300,19 +3313,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1263959411
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1263959406}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a834322528004b48ad496bfa64e0b16, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  storeMenu: {fileID: 1263959407}
 --- !u!1 &1297035635
 GameObject:
   m_ObjectHideFlags: 0
