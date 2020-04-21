@@ -12,6 +12,9 @@ public class GameEnder : StateChangeListener {
     private int highscore;
     private float averageScore;
     private int gold;
+    private int goldFromApples;
+    private int goldFromApplesBeforeRevive;
+    private bool isHardMode;
     private int consecutiveRounds;
     private int consecutiveRevivals;
 
@@ -19,6 +22,7 @@ public class GameEnder : StateChangeListener {
     public Text endHighscoreLabel;
     public Text endAverageScoreLabel;
     public Text endGoldLabel;
+    public Text appleGoldLabel;
     public GameObject reviveButton;
     public Text reviveButtonLabel;
     public GameObject reviveWithAdButton;
@@ -33,9 +37,7 @@ public class GameEnder : StateChangeListener {
 
     void Start() {
         // check if "no ads" is active
-        DateTime noAdsExpiration = DataAndSettingsManager.getExpirationDateForStoreItem(StoreManager.ITEM_KEY_NO_ADS_TEMPORARY);
-        DateTime now = DateTime.Now;
-        this.shouldShowAds = (noAdsExpiration.CompareTo(now) < 0);
+        this.shouldShowAds = (StoreManager.shouldShowAds() && IAPManager.shouldShowAds());
     }
 
     /* * * * StateChangeListener delegate * * * */
@@ -48,6 +50,7 @@ public class GameEnder : StateChangeListener {
         else {
             if (newState == GameState.WaitingToStart) {
                 this.scoreBeforeRevive = 0;
+                this.goldFromApplesBeforeRevive = 0;
             }
             this.enabled = false;
         }
@@ -84,13 +87,13 @@ public class GameEnder : StateChangeListener {
 
     private void endGame() {
         //Debug.Log("endGame");
-        this.saveData();
+        this.updateAndSaveData();
         this.displayData();
         this.showReviveButtonsIfNecessary();
         this.showInterstitialAdIfNecessary();
     }
 
-    private void saveData() {
+    private void updateAndSaveData() {
         this.score = GameStateManager.getScore();
         this.highscore = DataAndSettingsManager.getHighscore();
         if (this.score > this.highscore) {
@@ -98,16 +101,31 @@ public class GameEnder : StateChangeListener {
             DataAndSettingsManager.setHighscore(this.highscore);
         }
 
+        this.gold = GameStateManager.getGoldAmount();
+        this.isHardMode = DataAndSettingsManager.getHardModeState();
+        this.goldFromApples = GameStateManager.getApples() / 2 - this.goldFromApplesBeforeRevive;
+        int addition = this.goldFromApples;
+        if (this.isHardMode) {
+            addition = (int)(addition * 1.5);
+        }
+        this.gold += addition;
+        DataAndSettingsManager.setGoldAmount(this.gold);
+        this.goldFromApplesBeforeRevive += this.goldFromApples;
+
         float average = DataAndSettingsManager.getAverageScore();
         int numGames = DataAndSettingsManager.getGamesPlayed();
-        average = (average * numGames + (this.score - this.scoreBeforeRevive)) / (numGames + 1); // only count points earned this round (disregard points from before revival)
+        if (consecutiveRevivals > 0) {
+            average += (float)(this.score - this.scoreBeforeRevive) / numGames;
+        }
+        else {
+            average = (average * numGames + this.score) / (numGames + 1);
+            DataAndSettingsManager.setGamesPlayed(numGames + 1);
+        }
         this.averageScore = average;
         DataAndSettingsManager.setAverageScore(average);
-        DataAndSettingsManager.setGamesPlayed(numGames + 1);
         this.scoreBeforeRevive = this.score;
 
-        this.gold = GameStateManager.getGoldAmount();
-        DataAndSettingsManager.setGoldAmount(this.gold);
+        DataAndSettingsManager.writeData();
     }
 
     private void displayData() {
@@ -115,6 +133,12 @@ public class GameEnder : StateChangeListener {
         this.endHighscoreLabel.text = "Highscore: " + this.highscore;
         this.endAverageScoreLabel.text = "Average: " + this.averageScore.ToString("F2"); // two digits after the decimal
         this.endGoldLabel.text = "Gold: " + this.gold;
+        if (this.isHardMode) {
+            this.appleGoldLabel.text = "+ 1.5\u00d7" + (this.goldFromApples);
+        }
+        else {
+            this.appleGoldLabel.text = "+ " + (this.goldFromApples);
+        }
     }
 
     private void showReviveButtonsIfNecessary() {

@@ -187,7 +187,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemLabel: {fileID: 175863751005934236}
   buyButton: {fileID: 175863751408262882}
-  costLabel: {fileID: 4021436823706897434}
+  costLabel: {fileID: 175863751444496581}
   descriptionLabel: {fileID: 1968304685}
 --- !u!1 &175863751005934238
 GameObject:
@@ -225,7 +225,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 30, y: -60}
-  m_SizeDelta: {x: -130, y: 120}
+  m_SizeDelta: {x: -260, y: 120}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &175863751005934237
 CanvasRenderer:
@@ -257,11 +257,11 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: f1109f1c9ee78402aaad1557956c0aef, type: 3}
-    m_FontSize: 36
+    m_FontSize: 40
     m_FontStyle: 0
-    m_BestFit: 0
-    m_MinSize: 3
-    m_MaxSize: 48
+    m_BestFit: 1
+    m_MinSize: 20
+    m_MaxSize: 40
     m_Alignment: 3
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -316,7 +316,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4021436823706897432}
+  - {fileID: 175863751444496533}
   m_Father: {fileID: 175863750498781260}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -532,7 +532,7 @@ PrefabInstance:
     - target: {fileID: 3873034495079615916, guid: 53720f98ae652426ba01587e926297f1,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -40
       objectReference: {fileID: 0}
     - target: {fileID: 3873034495079615916, guid: 53720f98ae652426ba01587e926297f1,
         type: 3}
@@ -552,7 +552,7 @@ PrefabInstance:
     - target: {fileID: 3873034495079615916, guid: 53720f98ae652426ba01587e926297f1,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3873034495079615916, guid: 53720f98ae652426ba01587e926297f1,
         type: 3}
@@ -562,7 +562,7 @@ PrefabInstance:
     - target: {fileID: 3873034495079615916, guid: 53720f98ae652426ba01587e926297f1,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3873034495079615916, guid: 53720f98ae652426ba01587e926297f1,
         type: 3}
@@ -576,13 +576,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 53720f98ae652426ba01587e926297f1, type: 3}
---- !u!224 &4021436823706897432 stripped
+--- !u!224 &175863751444496533 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3873034495079615916, guid: 53720f98ae652426ba01587e926297f1,
     type: 3}
   m_PrefabInstance: {fileID: 175863751444496820}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &4021436823706897434 stripped
+--- !u!114 &175863751444496581 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3873034495079615918, guid: 53720f98ae652426ba01587e926297f1,
     type: 3}

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StoreManager : MonoBehaviour {
+public static class StoreManager {
 
     /* * * * Names of expendable items * * * */
     public static readonly string ITEM_KEY_EXTRA_LIFE = "store.1up";
@@ -24,16 +24,16 @@ public class StoreManager : MonoBehaviour {
         new StoreItem(ITEM_KEY_NO_ADS_TEMPORARY, "No ads for 24 hours", 10, "Activate immediately (they stack).", 24),
         new StoreItem(ITEM_KEY_RESET_AVERAGE, "Reset average", 25, "Reset from the Stats menu."),
         // unlockables
-        new StoreItem(ITEM_KEY_HARD_MODE, "Hard mode", 50, "Toggle when starting a game."),
-        new StoreItem(ITEM_KEY_COLORS_PAS_FRU, "Pastel & Fruit", 60, "Find these new color schemes in Settings."),
-        new StoreItem(ITEM_KEY_COLORS_WAR_COO, "Warm & Cool", 60, "Find these new color schemes in Settings."),
-        new StoreItem(ITEM_KEY_COLORS_MID_WHI, "Midnight & Whiteout", 60, "Find these new color schemes in Settings."),
-        new StoreItem(ITEM_KEY_COLORS_RGB_CMY, "RGB & CMYK", 60, "Find these new color schemes in Settings."),
+        new StoreItem(ITEM_KEY_HARD_MODE, "Hard mode", 40, "Toggle when starting a game. Includes a gold boost."),
+        new StoreItem(ITEM_KEY_COLORS_PAS_FRU, "Pastel & Fruit", 50, "Find these new color schemes in Settings."),
+        new StoreItem(ITEM_KEY_COLORS_WAR_COO, "Warm & Cool", 50, "Find these new color schemes in Settings."),
+        new StoreItem(ITEM_KEY_COLORS_MID_WHI, "Midnight & Whiteout", 50, "Find these new color schemes in Settings."),
+        new StoreItem(ITEM_KEY_COLORS_RGB_CMY, "RGB & CMYK", 50, "Find these new color schemes in Settings."),
         new StoreItem(ITEM_KEY_BRAGGING_RIGHTS, "Bragging rights", 500, "Brag anywhere (unlocks a secret).")
     };
     private static readonly int numExpendables = 3;
 
-    /* * * * Public methods * * * */
+    /* * * * Public getters * * * */
 
     public static int getNumExpendables() {
         return numExpendables;
@@ -46,6 +46,8 @@ public class StoreManager : MonoBehaviour {
     public static StoreItem getItemWithID(int id) {
         return STORE_ITEMS[id];
     }
+
+    /* * * * Buying items * * * */
 
     public static bool buyItem(int id) {
         StoreItem item = STORE_ITEMS[id];
@@ -95,6 +97,16 @@ public class StoreManager : MonoBehaviour {
                 }
             }
         }
+    }
+
+    /* * * * Item-specific methods * * * */
+
+    ///<summary>Returns whether interstitial ads should be shown, based on whether the temporary no-ads item is active.
+    /// Should also check whether the user has bought the permanent no-ads IAP.</summary>
+    public static bool shouldShowAds() {
+        DateTime expiration = DataAndSettingsManager.getExpirationDateForStoreItem(ITEM_KEY_NO_ADS_TEMPORARY);
+        DateTime now = DateTime.Now;
+        return (expiration.CompareTo(now) < 0);
     }
 
 }

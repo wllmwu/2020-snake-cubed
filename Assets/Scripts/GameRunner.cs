@@ -31,20 +31,18 @@ public class GameRunner : StateChangeListener {
     private GameObject boundingBox;
     private Snake snake;
     private int score;
+    private int applesCollected;
     private int goldAmount;
     private bool isHardMode;
-    private static readonly float DEFAULT_TIME_INTERVAL = 0.45f;
+    private static readonly float DEFAULT_TIME_INTERVAL = 0.4f;
     private static readonly float SLOW_TIME_INTERVAL = 1f;
     private static readonly float FAST_TIME_INTERVAL = 0.25f;
-    private float timeInterval;
-    private int numBads;
     private bool isPaused;
     private bool isReviving;
     private Cube apple;
     private Cube gold;
-    //private Cube bad;
     private List<Cube> bads;
-    private List<IEnumerator> badCoroutines = new List<IEnumerator>();
+    private List<IEnumerator> badCoroutines;
 
     public GameObject mainCamera;
     public Text scoreLabel;
@@ -69,13 +67,10 @@ public class GameRunner : StateChangeListener {
         }
     }
 
-    // Update is called once per frame
-    void Update() {
-    }
-
     /* * * * Public getters * * * */
 
     public int getScore() { return this.score; }
+    public int getApples() { return this.applesCollected; }
     public int getGoldAmount() { return this.goldAmount; }
 
     public bool canRevive() {
@@ -151,10 +146,9 @@ public class GameRunner : StateChangeListener {
         this.space[3,2,2] = SPACE_SNAKE;
         this.space[4,2,2] = SPACE_SNAKE;
         this.score = 0;
+        this.applesCollected = 0;
         this.goldAmount = DataAndSettingsManager.getGoldAmount();
         this.isHardMode = DataAndSettingsManager.getHardModeState();
-        this.timeInterval = this.isHardMode ? FAST_TIME_INTERVAL : DEFAULT_TIME_INTERVAL;
-        this.numBads = this.isHardMode ? 10 : 5;
         this.isPaused = false;
 
         this.generateApple();
@@ -182,9 +176,7 @@ public class GameRunner : StateChangeListener {
             IEnumerator coroutine = this.randomlyGenerateBad(bad);
             this.badCoroutines.Add(coroutine);
             StartCoroutine(coroutine);
-            //StartCoroutine("randomlyGenerateBad", bad);
         }
-        //StartCoroutine("randomlyGenerateBad");
     }
 
     ///<summary>The main game coroutine - repeatedly moves the snake and checks for apples until the snake can't move.</summary>
@@ -192,14 +184,15 @@ public class GameRunner : StateChangeListener {
         // keep moving the snake and checking for apples until the snake hits the wall or itself
         int[] next = this.snake.nextMove();
         while (this.validMove(next)) {
+            float timeToMove = this.timeInterval();
             if (this.aboutToEatApple(next) && this.shouldGrow()) {
-                this.snake.grow(this.timeInterval, DataAndSettingsManager.getSmoothMovementState());
+                this.snake.grow(timeToMove, DataAndSettingsManager.getSmoothMovementState());
             }
             else {
-                int[] old = this.snake.move(this.timeInterval, DataAndSettingsManager.getSmoothMovementState());
+                int[] old = this.snake.move(timeToMove, DataAndSettingsManager.getSmoothMovementState());
                 this.setValueAtCoordinates(old, SPACE_EMPTY);
             }
-            yield return StartCoroutine(this.pausableWait(this.timeInterval)); // the player may pause during this time
+            yield return StartCoroutine(this.pausableWait(timeToMove)); // the player may pause during this time
 
             this.lookForApples(next);
             this.setValueAtCoordinates(next, SPACE_SNAKE);
@@ -220,7 +213,6 @@ public class GameRunner : StateChangeListener {
         foreach (IEnumerator coroutine in this.badCoroutines) {
             StopCoroutine(coroutine);
         }
-        //StopCoroutine("randomlyGenerateBad");
         GameStateManager.onGameEnd();
         this.snake.enabled = false;
     }
@@ -231,15 +223,14 @@ public class GameRunner : StateChangeListener {
         foreach (Cube bad in this.bads) {
             this.removeBad(bad);
         }
-        //this.removeBad();
-        this.timeInterval = SLOW_TIME_INTERVAL; // first (randomly chosen) move is slower
+        this.goldAmount = DataAndSettingsManager.getGoldAmount();
+        this.updateGoldLabel();
         this.isReviving = true;
         this.actuallyStartGameAction();
-        this.timeInterval = this.isHardMode ? FAST_TIME_INTERVAL : DEFAULT_TIME_INTERVAL;
         this.isReviving = false;
     }
 
-    /* * * * Initializing, generating, destroying objects * * * */
+    /* * * * Initializing, generating, and destroying objects * * * */
 
     private void initializeObjects() {
         //Debug.Log("initialize objects");
@@ -259,14 +250,14 @@ public class GameRunner : StateChangeListener {
         this.apple.gameObject.SetActive(false);
         this.gold = Instantiate(this.goldPrefab, originPosition + new Vector3(-1, -1, -1), originRotation, originTransform) as Cube;
         this.gold.gameObject.SetActive(false);
-        //this.bad = Instantiate(this.badPrefab, originPosition + new Vector3(-1, -1, -1), originRotation, originTransform) as Cube;
-        //this.bad.gameObject.SetActive(false);
         this.bads = new List<Cube>();
-        for (int i = 0; i < this.numBads; i++) {
+        int numBads = this.isHardMode ? 10 : 5;
+        for (int i = 0; i < numBads; i++) {
             Cube bad = Instantiate(this.badPrefab, originPosition + new Vector3(-1, -1, -1), originRotation, originTransform) as Cube;
             this.bads.Add(bad);
             bad.gameObject.SetActive(false);
         }
+        this.badCoroutines = new List<IEnumerator>();
     }
 
     private void generateApple() {
@@ -349,7 +340,8 @@ public class GameRunner : StateChangeListener {
                 Destroy(bad.gameObject);
                 //Debug.Log("7");
             }
-            //Destroy(this.bad.gameObject);
+            this.bads.Clear();
+            this.badCoroutines.Clear();
         }
     }
 
@@ -384,6 +376,7 @@ public class GameRunner : StateChangeListener {
             this.showPointsFeedback(this.apple.gameObject.transform.position, SPACE_APPLE);
             this.apple.gameObject.SetActive(false);
             this.score += 1;
+            this.applesCollected += 1;
             this.generateApple(); // will be regenerated immediately
         }
         else if (value == SPACE_GOLD) {
@@ -405,14 +398,15 @@ public class GameRunner : StateChangeListener {
                 this.showPointsFeedback(bad.gameObject.transform.position, SPACE_BAD);
                 bad.gameObject.SetActive(false); // will be regenerated eventually
                 this.score -= 2;
+                this.applesCollected -= 2;
             }
-            //this.showPointsFeedback(this.bad.gameObject.transform.position, SPACE_BAD);
-            //this.bad.gameObject.SetActive(false); // will be regenerated eventually
-            //this.score -= 2;
         }
 
         if (this.score < 0) {
             this.score = 0;
+        }
+        if (this.applesCollected < 0) {
+            this.applesCollected = 0;
         }
         this.updateScoreLabel();
     }
@@ -493,6 +487,24 @@ public class GameRunner : StateChangeListener {
     private bool shouldGrow() {
         int length = this.snake.getLength();
         return (length <= 12) || (Random.Range(1, 41) > length);
+    }
+
+    private float timeInterval() {
+        if (this.isReviving) {
+            return SLOW_TIME_INTERVAL;
+        }
+        else if (this.isHardMode) {
+            return FAST_TIME_INTERVAL;
+        }
+        else if (this.score < 10) {
+            return DEFAULT_TIME_INTERVAL;
+        }
+        else if (this.score < 40) {
+            return DEFAULT_TIME_INTERVAL - ((this.score - 7) / 3 * 0.01f);
+        }
+        else {
+            return DEFAULT_TIME_INTERVAL - 0.1f;
+        }
     }
 
     ///<summary>A helper coroutine that functions the same as `yield return new WaitForSeconds(waitTime);`, but also respects the game's pause state. Usage: `yield return StartCoroutine(this.pausableWait(waitTime));`.</summary>

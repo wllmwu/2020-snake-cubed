@@ -34,7 +34,15 @@ public class GameStateManager : MonoBehaviour {
         onInitialize();
     }
 
+    void OnApplicationPause(bool pauseStatus) {
+        // this method is called when the app is soft-closed on iOS and Android
+        if (pauseStatus) {
+            DataAndSettingsManager.writeData();
+        }
+    }
+
     void OnDestroy() {
+        DataAndSettingsManager.writeData();
     }
 
     /* * * * Public getters * * * */
@@ -43,6 +51,7 @@ public class GameStateManager : MonoBehaviour {
     public static GameState getPreviousState() { return previousState; }
 
     public static int getScore() { return gameRunner.getScore(); }
+    public static int getApples() { return gameRunner.getApples(); }
     public static int getGoldAmount() { return gameRunner.getGoldAmount(); }
     public static bool canRevive() { return gameRunner.canRevive(); }
 

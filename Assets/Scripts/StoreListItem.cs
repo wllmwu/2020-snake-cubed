@@ -27,10 +27,11 @@ public class StoreListItem : MonoBehaviour {
     /* * * * UI actions * * * */
 
     public void buyAction() {
+        FindObjectOfType<AudioManager>().playButtonSound();
         if (StoreManager.buyItem(this.itemID)) {
             this.updateLabelsAndButton();
             this.menuResponder();
-            FindObjectOfType<AudioManager>().playButtonSound();
+            FindObjectOfType<AlertPrompt>().showMessage("Purchase successful!");
         }
     }
 

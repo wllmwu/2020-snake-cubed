@@ -21,20 +21,28 @@ public class MainMenu : MonoBehaviour {
 
     public GameObject menuCubePrefab;
     private List<GameObject> menuCubes;
-    private static readonly float cubeSize = 0.47f;
-    private static readonly int cubeStartDistance = 20;
-    private static readonly float timeInterval = 0.4f;
+    private static readonly float CUBE_SIZE = 0.47f;
+    private static readonly int CUBE_START_DISTANCE = 20;
+    private static readonly float CUBE_TIME_INTERVAL = 0.4f;
 
     public GameObject crownImage;
 
     /* * * * Lifecycle methods * * * */
+
+    void Awake() {
+        #if UNITY_IOS
+        System.Environment.SetEnvironmentVariable("MONO_REFLECTION_SERIALIZER", "yes");
+        #endif
+        DataAndSettingsManager.loadData();
+    }
 
     // Start is called before the first frame update
     void Start() {
         this.menuCubes = new List<GameObject>();
         this.openMainAction(); // switch to main panel
         this.updateStatsMenu();
-        StartCoroutine("generateMenuCubes");
+        //StartCoroutine("generateMenuCubes");
+        this.startMenuCubes();
         FindObjectOfType<AudioManager>().playMusic(AudioManager.MUSIC_MENU);
         StoreManager.updateLifespanItemCounts();
         MobileAds.Initialize(initStatus => {});
@@ -43,6 +51,17 @@ public class MainMenu : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         this.moveCubes();
+    }
+
+    void OnApplicationPause(bool pauseStatus) {
+        // this method is called when the app is soft-closed on iOS and Android
+        if (pauseStatus) {
+            DataAndSettingsManager.writeData();
+        }
+    }
+
+    void OnDestroy() {
+        DataAndSettingsManager.writeData();
     }
 
     /* * * * UI actions * * * */
@@ -61,6 +80,7 @@ public class MainMenu : MonoBehaviour {
     ///<summary>This method is linked to the Stats button on the canvas.</summary>
     public void openStatsAction() {
         this.deactivateAllPanels();
+        this.updateStatsMenu();
         this.statsPanel.SetActive(true);
     }
 
@@ -91,20 +111,22 @@ public class MainMenu : MonoBehaviour {
         Application.OpenURL("https://www.zapsplat.com/");
     }
 
+    public void restorePurchasesAction() {
+        IAPManager.restorePurchases();
+    }
+
     /* * * * Animated background cubes * * * */
 
-    ///<summary>Instantiates a new menu cube at a random placement along the starting line every `this.timeInterval` seconds.</summary>
-    private IEnumerator generateMenuCubes() {
+    private void startMenuCubes() {
         int placement = 0, previousPlacement = 0;
-        while (true) {
+        for (int i = 0; i < CUBE_START_DISTANCE * 2 + 1; i++) {
             while (placement == previousPlacement) {
-                placement = Random.Range(-17, 17);
+                placement = Random.Range(-17, 18);
             }
-            GameObject cube = Instantiate(this.menuCubePrefab, new Vector3(cubeSize * cubeStartDistance, 0f, cubeSize * placement), Quaternion.identity);
+            GameObject cube = Instantiate(this.menuCubePrefab, new Vector3(CUBE_SIZE * (CUBE_START_DISTANCE + i), 0f, CUBE_SIZE * placement), Quaternion.identity);
             this.assignRandomColor(cube);
             this.menuCubes.Add(cube);
             previousPlacement = placement;
-            yield return new WaitForSeconds(timeInterval);
         }
     }
 
@@ -116,17 +138,13 @@ public class MainMenu : MonoBehaviour {
         cube.GetComponent<Renderer>().material.color = color;
     }
 
-    ///<summary>Moves all existing cubes in the -x direction, and destroys any that have moved off the screen.</summary>
     private void moveCubes() {
-        float dx = -cubeSize / timeInterval * Time.deltaTime;
-        for (int i = 0; i < this.menuCubes.Count; i++) {
-            GameObject cube = this.menuCubes[i];
+        float dx = -CUBE_SIZE * Time.deltaTime / CUBE_TIME_INTERVAL;
+        foreach (GameObject cube in this.menuCubes) {
             cube.transform.Translate(dx, 0f, 0f);
-            if (cube.transform.position.x < cubeSize * -20) {
-                // destroy the cube if it is no longer visible
-                this.menuCubes.RemoveAt(i);
-                Destroy(cube);
-                i--;
+            if (cube.transform.position.x < CUBE_SIZE * -CUBE_START_DISTANCE) {
+                // move the cube back if it is no longer visible
+                cube.transform.position = new Vector3(CUBE_SIZE * CUBE_START_DISTANCE, 0f, cube.transform.position.z);
             }
         }
     }
