@@ -28,8 +28,9 @@ public class Snake : MonoBehaviour {
     private GameObject gameOrigin;
     private SnakeNode ghostNode;
 
-    /* * * * Public setters * * * */
+    /* * * * Public getters and setters * * * */
 
+    public int getNextDirection() { return this.nextDirection; }
     public void setNextDirection(int direction) { this.nextDirection = direction; }
     public void setGameOrigin(GameObject origin) { this.gameOrigin = origin; }
     public void setPaused(bool paused) {

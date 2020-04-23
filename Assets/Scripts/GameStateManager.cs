@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public enum GameState {
     SettingPosition,
     WaitingToStart,
+    TutorialRunning,
     GameRunning,
     GamePaused,
     GameOver//,
@@ -78,6 +79,11 @@ public class GameStateManager : MonoBehaviour {
     public static void onPositionCancel() {
         // position is being changed
         setState(GameState.SettingPosition);
+    }
+
+    public static void onTutorialStart() {
+        // tutorial has begun
+        setState(GameState.TutorialRunning);
     }
 
     public static void onGameStart() {
