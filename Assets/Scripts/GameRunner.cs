@@ -230,6 +230,7 @@ public class GameRunner : StateChangeListener {
         StopCoroutine("reviveTutorial");
         this.isTutorial = false;
         GameStateManager.onPositionSet();
+        this.setupGame();
     }
 
     ///<summary>Activates objects that should be active during the game and starts the game coroutines. This method is linked to a button on the canvas.</summary>
