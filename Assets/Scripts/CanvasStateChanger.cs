@@ -9,6 +9,7 @@ public class CanvasStateChanger : StateChangeListener {
      * They should match the cases of the GameStateManager.GameState enum. */
     public bool activeForSettingPosition;
     public bool activeForWaitingToStart;
+    public bool activeForTutorialRunning;
     public bool activeForGameRunning;
     public bool activeForGamePaused;
     public bool activeForGameOver;
@@ -22,6 +23,9 @@ public class CanvasStateChanger : StateChangeListener {
                 break;
             case GameState.WaitingToStart:
                 this.gameObject.SetActive(this.activeForWaitingToStart);
+                break;
+            case GameState.TutorialRunning:
+                this.gameObject.SetActive(this.activeForTutorialRunning);
                 break;
             case GameState.GameRunning:
                 this.gameObject.SetActive(this.activeForGameRunning);

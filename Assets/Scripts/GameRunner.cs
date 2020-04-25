@@ -39,12 +39,14 @@ public class GameRunner : StateChangeListener {
     private static readonly float FAST_TIME_INTERVAL = 0.25f;
     private bool isPaused;
     private bool isReviving;
+    private bool isTutorial;
     private Cube apple;
     private Cube gold;
     private List<Cube> bads;
     private List<IEnumerator> badCoroutines;
 
     public GameObject mainCamera;
+    public AlertPrompt tutorialAlertPanel;
     public Text scoreLabel;
     public Text goldLabel;
     public DirectionCube directionCube;
@@ -165,6 +167,72 @@ public class GameRunner : StateChangeListener {
         GameStateManager.onPositionCancel();
     }
 
+    public void startTutorialAction() {
+        GameStateManager.onTutorialStart();
+        this.isTutorial = true;
+        this.snake.enabled = true;
+        StartCoroutine("runGame");
+        StartCoroutine("runTutorial");
+    }
+
+    private IEnumerator runTutorial() {
+        float timeToMove = this.timeInterval();
+        yield return StartCoroutine(this.pausableWait(timeToMove * 1.5f));
+        yield return StartCoroutine(this.displayTutorialMessage("Welcome to s\u00b3, a 3D extension of the classic snake game!\n\n" +
+            "Our little snake has already started moving. Swipe on the screen to change its direction!"));
+        yield return StartCoroutine(this.pausableWait(timeToMove * 10));
+        yield return StartCoroutine(this.displayTutorialMessage("No matter what angle you're looking from, " +
+            "the game will figure out what horizontal direction you meant by swiping.\n\n" +
+            "But to move upwards or downwards, press the arrow buttons below.\n\n" +
+            "Swipe to continue!"));
+        yield return StartCoroutine(this.pausableWait(timeToMove * 10));
+        yield return StartCoroutine(this.displayTutorialMessage("Your goal is to eat as many apples (red cubes) as you can.\n\n" +
+            "Try to grab this apple\u2014swipe to continue!"));
+        int s = this.score;
+        while (this.score == s) {
+            yield return null;
+        }
+        yield return StartCoroutine(this.displayTutorialMessage("Nice! Apples and other things that appear will increase " +
+            "(or decrease) your score.\n\n" +
+            "It may be tough now, but this game will really train your depth perception and spatial awareness. " +
+            "And once you get the hang of it, it's also really satisfying.\n\n" +
+            "Continue this tutorial for as long as you want!"));
+        yield break;
+    }
+
+    private IEnumerator displayTutorialMessage(string message) {
+        this.isPaused = true;
+        this.tutorialAlertPanel.showMessage(message);
+        int direction = this.snake.getNextDirection();
+        yield return new WaitForSeconds(0.2f);
+        while (this.snake.getNextDirection() == direction && this.isTutorial) {
+            yield return null;
+        }
+        this.tutorialAlertPanel.closeAction();
+        this.isPaused = false;
+        yield break;
+    }
+
+    private void stopTutorial() {
+        StartCoroutine("reviveTutorial");
+    }
+
+    private IEnumerator reviveTutorial() {
+        yield return StartCoroutine(this.displayTutorialMessage("Oh no, the snake hit something! This would normally end the game, " +
+            "but in this tutorial, you may continue.\n\nSwipe to change direction and resume."));
+        StartCoroutine("runGame");
+        yield break;
+    }
+
+    public void quitTutorialAction() {
+        StopCoroutine("runGame");
+        StopCoroutine("runTutorial");
+        StopCoroutine("reviveTutorial");
+        this.isTutorial = false;
+        GameStateManager.onPositionSet();
+        this.setupGame();
+    }
+
     ///<summary>Activates objects that should be active during the game and starts the game coroutines. This method is linked to a button on the canvas.</summary>
     public void actuallyStartGameAction() {
         //Debug.Log("actually start game");
@@ -198,7 +266,12 @@ public class GameRunner : StateChangeListener {
             this.setValueAtCoordinates(next, SPACE_SNAKE);
             next = this.snake.nextMove();
         }
-        this.stopGame();
+        if (this.isTutorial) {
+            this.stopTutorial();
+        }
+        else {
+            this.stopGame();
+        }
         yield break;
     }
 
@@ -490,7 +563,10 @@ public class GameRunner : StateChangeListener {
     }
 
     private float timeInterval() {
-        if (this.isReviving) {
+        if (this.isTutorial) {
+            return DEFAULT_TIME_INTERVAL + 0.1f;
+        }
+        else if (this.isReviving) {
             return SLOW_TIME_INTERVAL;
         }
         else if (this.isHardMode) {
