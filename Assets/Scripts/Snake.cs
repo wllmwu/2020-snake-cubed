@@ -56,14 +56,9 @@ public class Snake : MonoBehaviour {
         this.tail.setCoordinates(2, 2, 2);
     }
 
-    // Start is called before the first frame update
     void Start() {
         // ghostNode serves only in animating the snake's movement - not actually part of the snake
         this.ghostNode = Instantiate(this.snakeNodePrefab, this.tail.transform.position, this.tail.transform.rotation, this.gameOrigin.transform) as SnakeNode;
-    }
-
-    // Update is called once per frame
-    void Update() {
     }
 
     void OnDestroy() {

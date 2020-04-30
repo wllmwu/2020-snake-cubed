@@ -170,12 +170,10 @@ public static class DataAndSettingsManager {
             return value;
         }
         return defaultValue;
-        //return PlayerPrefs.GetInt(key, defaultValue);
     }
     private static void saveInt(string key, int value) {
         intData[key] = value;
         changedSinceLastWrite = true;
-        //PlayerPrefs.SetInt(key, value);
     }
 
     private static float retrieveFloat(string key, float defaultValue) {
@@ -184,12 +182,10 @@ public static class DataAndSettingsManager {
             return value;
         }
         return defaultValue;
-        //return PlayerPrefs.GetFloat(key, defaultValue);
     }
     private static void saveFloat(string key, float value) {
         floatData[key] = value;
         changedSinceLastWrite = true;
-        //PlayerPrefs.SetFloat(key, value);
     }
 
     private static bool retrieveBool(string key, bool defaultValue) {
@@ -198,12 +194,10 @@ public static class DataAndSettingsManager {
             return value;
         }
         return defaultValue;
-        //return PlayerPrefs.GetInt(key, (defaultValue ? 1 : 0)) != 0;
     }
     private static void saveBool(string key, bool value) {
         boolData[key] = value;
         changedSinceLastWrite = true;
-        //PlayerPrefs.SetInt(key, value ? 1 : 0);
     }
 
     private static DateTime retrieveDate(string key) {
@@ -222,12 +216,10 @@ public static class DataAndSettingsManager {
             return value;
         }
         return defaultValue;
-        //return PlayerPrefs.GetString(key, defaultValue);
     }
     private static void saveString(string key, string value) {
         stringData[key] = value;
         changedSinceLastWrite = true;
-        //PlayerPrefs.SetString(key, value);
     }
 
 }
@@ -260,44 +252,5 @@ class SaveData {
     public Dictionary<string, float> getFloatData() { return this.floatData; }
     public Dictionary<string, bool> getBoolData() { return this.boolData; }
     public Dictionary<string, string> getStringData() { return this.stringData; }
-/*
-    // player stats
-    [SerializeField]
-    private int highscore;
-    [SerializeField]
-    private float averageScore;
-    [SerializeField]
-    private int gamesPlayed;
-    [SerializeField]
-    private int goldAmount;
-
-    // settings
-    [SerializeField]
-    private bool isHardModeOn;
-    /*private bool isColorblindModeOn;
-    private int colorSchemeID;
-    private bool isSmoothMovementOn;
-    private bool isMusicOn;
-    private bool isSoundEffectsOn;
-
-    // store data
-    [SerializeField]
-    private int numBoughtExtraLife;
-    [SerializeField]
-    private int numBoughtNoAdsTemp;
-    [SerializeField]
-    private int numBoughtResetAverage;
-    [SerializeField]
-    private bool boughtHardMode;
-    [SerializeField]
-    private bool boughtColorsPasFru;
-    [SerializeField]
-    private bool boughtColorsWarCoo;
-    [SerializeField]
-    private bool boughtColorsMidWhi;
-    [SerializeField]
-    private bool boughtColorsRgbCmy;
-    [SerializeField]
-    private bool boughtBraggingRights;*/
 
 }

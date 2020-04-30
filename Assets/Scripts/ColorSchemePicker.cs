@@ -9,15 +9,6 @@ public class ColorSchemePicker : MonoBehaviour {
 
     private List<ColorSchemePickerListItem> listItems;
 
-    // Start is called before the first frame update
-    void Start() {
-        this.setupList();
-    }
-
-    // Update is called once per frame
-    void Update() {        
-    }
-
     private void setupList() {
         int selectedID = DataAndSettingsManager.getColorSchemeID();
         for (int i = 0; i < ColorSchemesManager.getNumColorSchemes(); i++) {

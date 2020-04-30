@@ -14,14 +14,6 @@ public class SnakeNode : Cube {
     public SnakeNode getNodeBefore() { return this.nodeBefore; }
     public void setPaused(bool paused) { this.isPaused = paused; }
 
-    // Start is called before the first frame update
-    void Start() {
-    }
-
-    // Update is called once per frame
-    void Update() {
-    }
-
     public int[] coordinatesOfNextNode() {
         int[] offset = Snake.DIRECTION_COORDINATE_OFFSETS[this.direction];
         return new int[3] { this.getX() + offset[0], this.getY() + offset[1], this.getZ() + offset[2] };

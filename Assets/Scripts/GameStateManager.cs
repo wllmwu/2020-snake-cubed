@@ -9,8 +9,7 @@ public enum GameState {
     TutorialRunning,
     GameRunning,
     GamePaused,
-    GameOver//,
-    // GameReviving
+    GameOver
 }
 
 public class GameStateManager : MonoBehaviour {

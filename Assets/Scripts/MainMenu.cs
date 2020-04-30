@@ -41,7 +41,6 @@ public class MainMenu : MonoBehaviour {
         this.menuCubes = new List<GameObject>();
         this.openMainAction(); // switch to main panel
         this.updateStatsMenu();
-        //StartCoroutine("generateMenuCubes");
         this.startMenuCubes();
         FindObjectOfType<AudioManager>().playMusic(AudioManager.MUSIC_MENU);
         StoreManager.updateLifespanItemCounts();

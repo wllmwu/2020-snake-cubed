@@ -58,10 +58,6 @@ public class GameRunner : StateChangeListener {
         this.gameOrigin = GameObject.FindWithTag("GameOrigin");
     }
 
-    // Start is called before the first frame update
-    void Start() {
-    }
-
     void OnEnable() {
         //Debug.Log("on enable");
         if (!this.isReviving) {
@@ -178,7 +174,7 @@ public class GameRunner : StateChangeListener {
     private IEnumerator runTutorial() {
         float timeToMove = this.timeInterval();
         yield return StartCoroutine(this.pausableWait(timeToMove * 1.5f));
-        yield return StartCoroutine(this.displayTutorialMessage("Welcome to s\u00b3, a 3D extension of the classic snake game!\n\n" +
+        yield return StartCoroutine(this.displayTutorialMessage("Welcome to Snake, Cubed\u2014a 3D extension of the classic snake game!\n\n" +
             "Our little snake has already started moving. Swipe on the screen to change its direction!"));
         yield return StartCoroutine(this.pausableWait(timeToMove * 10));
         yield return StartCoroutine(this.displayTutorialMessage("No matter what angle you're looking from, " +

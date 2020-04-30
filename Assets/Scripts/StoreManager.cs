@@ -119,10 +119,6 @@ public class StoreItem {
     private int cost;
     private string description;
     private int lifespanHours;
-    /*private bool hasALifespan;
-    private TimeSpan lifespan;
-    /*private bool shouldTrackPurchaseDate;
-    private bool shouldTrackExpirationDate;*/
 
     public StoreItem(string key, string name, int cost, string description): this(key, name, cost, description, 0) {}
     public StoreItem(string key, string name, int cost, string description, int lifespanHours) {
@@ -133,22 +129,12 @@ public class StoreItem {
         this.lifespanHours = lifespanHours;
     }
 
-    /*public StoreItem(string name, int cost, string description, bool shouldTrackPurchaseDate, bool shouldTrackExpirationDate) {
-        this.name = name;
-        this.cost = cost;
-        this.description = description;
-        this.shouldTrackPurchaseDate = shouldTrackPurchaseDate;
-        this.shouldTrackExpirationDate = shouldTrackExpirationDate;
-    }*/
-
     public string getKey() { return this.key; }
     public string getName() { return this.name; }
     public int getCost() { return this.cost; }
     public string getDescription() { return this.description; }
     public bool hasLifespan() { return (this.lifespanHours > 0); }
     public int getLifespanHours() { return this.lifespanHours; }
-    /*public bool shouldTrackItemPurchaseDate() { return this.shouldTrackPurchaseDate; }
-    public bool shouldTrackItemExpirationDate() { return this.shouldTrackExpirationDate; }*/
 
     public int getNumBought() {
         return DataAndSettingsManager.getNumBoughtForStoreItem(this.key);
