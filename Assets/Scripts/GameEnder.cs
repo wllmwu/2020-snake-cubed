@@ -156,7 +156,7 @@ public class GameEnder : StateChangeListener {
 
     private void showInterstitialAdIfNecessary() {
         //Debug.Log("consecutiveRounds = " + consecutiveRounds);
-        if (this.shouldShowAds && this.consecutiveRounds % 2 == 1 && this.interstitialAd.IsLoaded()) { // show an ad every other round
+        if (this.shouldShowAds && this.consecutiveRounds % 3 == 2 && this.interstitialAd.IsLoaded()) { // show an ad every three rounds
             this.interstitialAd.Show();
         }
     }
@@ -173,9 +173,9 @@ public class GameEnder : StateChangeListener {
     private void loadInterstitialAd() {
         //Debug.Log("loadInterstitialAd");
         #if UNITY_ANDROID
-            string adUnitID = "ca-app-pub-3940256099942544/1033173712";
+            string adUnitID = "ca-app-pub-3940256099942544/1033173712"; // TODO: change android unit id
         #elif UNITY_IOS
-            string adUnitID = "ca-app-pub-3940256099942544/4411468910"; // TODO: change unit ids
+            string adUnitID = "ca-app-pub-8611059613472162/7722698616";
         #else
             string adUnitID = "unexpected_platform";
         #endif
@@ -200,9 +200,9 @@ public class GameEnder : StateChangeListener {
     private void loadRewardedAd() {
         //Debug.Log("loadRewardedAd");
         #if UNITY_ANDROID
-            string adUnitID = "ca-app-pub-3940256099942544/5224354917";
+            string adUnitID = "ca-app-pub-3940256099942544/5224354917"; // TODO: change android unit id
         #elif UNITY_IOS
-            string adUnitID = "ca-app-pub-3940256099942544/1712485313"; // TODO: change unit ids
+            string adUnitID = "ca-app-pub-8611059613472162/2342664839";
         #else
             string adUnitID = "unexpected_platform";
         #endif

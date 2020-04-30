@@ -419,7 +419,7 @@ public class GameRunner : StateChangeListener {
     ///<summary>Converts the angle of a swipe into a direction for the snake to move, then instructs the snake to change its direction. This method is triggered by Swipes' `swipeEvent`.</summary>
     public void handleSwipe(float angle) {
         int direction = this.directionCube.directionForSwipe(angle);
-        if (direction != -1) {
+        if (GameStateManager.getCurrentState() == GameState.GameRunning && direction != -1) {
             this.snake.setNextDirection(direction);
         }
     }
