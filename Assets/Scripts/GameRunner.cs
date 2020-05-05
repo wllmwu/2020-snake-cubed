@@ -174,7 +174,7 @@ public class GameRunner : StateChangeListener {
     private IEnumerator runTutorial() {
         float timeToMove = this.timeInterval();
         yield return StartCoroutine(this.pausableWait(timeToMove * 1.5f));
-        yield return StartCoroutine(this.displayTutorialMessage("Welcome to Snake, Cubed\u2014a 3D extension of the classic snake game!\n\n" +
+        yield return StartCoroutine(this.displayTutorialMessage("Welcome to Snake, Cubed \u2014 a 3D extension of the classic snake game!\n\n" +
             "Our little snake has already started moving. Swipe on the screen to change its direction!"));
         yield return StartCoroutine(this.pausableWait(timeToMove * 10));
         yield return StartCoroutine(this.displayTutorialMessage("No matter what angle you're looking from, " +

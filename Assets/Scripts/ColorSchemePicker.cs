@@ -7,7 +7,9 @@ public class ColorSchemePicker : MonoBehaviour {
     public GameObject listContentRect;
     public ColorSchemePickerListItem listItemPrefab;
 
-    private List<ColorSchemePickerListItem> listItems;
+    void Start() {
+        this.setupList();
+    }
 
     private void setupList() {
         int selectedID = DataAndSettingsManager.getColorSchemeID();

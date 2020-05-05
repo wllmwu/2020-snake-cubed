@@ -27,47 +27,47 @@ public static class ColorSchemesManager {
         ),
         new ColorScheme(
             "Black and white", // ID = 1
-            new Color(0f, 0f, 0f, 178/255f),                // bounds - black
+            new Color(60/255f, 60/255f, 60/255f, 178/255f), // bounds - gray
             new Color(1f, 1f, 1f, 1f),                      // snake - white
             new Color(220/255f, 220/255f, 220/255f, 1f),    // apple - light gray
-            new Color(1f, 223/255f, 42/255f, 1f),           // gold - gold
+            new Color(238/255f, 223/255f, 173/255f, 1f),    // gold - pale gold
             new Color(30/255f, 30/255f, 30/255f, 1f),       // bad - dark gray
             "default"
         ),
         new ColorScheme(
             "Pastel", // ID = 2
-            new Color(181/255f, 227/255f, 248/255f, 178/255f),  // bounds - pastel blue
-            new Color(175/255f, 243/255f, 157/255f, 1f),        // snake - pastel green
-            new Color(1f, 167/255f, 178/255f, 1f),              // apple - pastel red
-            new Color(1f, 240/255f, 153/255f, 1f),              // gold - pastel yellow
-            new Color(184/255f, 157/255f, 202/255f, 1f),        // bad - pastel purple
+            new Color(220/255f, 243/255f, 254/255f, 178/255f),  // bounds - pastel blue
+            new Color(220/255f, 254/255f, 222/255f, 1f),        // snake - pastel green
+            new Color(1f, 222/255f, 222/255f, 1f),              // apple - pastel red
+            new Color(252/255f, 247/255f, 220/255f, 1f),        // gold - pastel yellow
+            new Color(241/255f, 221/255f, 1f, 1f),              // bad - pastel purple
             StoreManager.ITEM_KEY_COLORS_PAS_FRU
         ),
         new ColorScheme(
             "Fruit", // ID = 3
-            new Color(0f, 167/255f, 16/255f, 178/255f),     // bounds - dark green
-            new Color(57/255f, 217/255f, 13/255f, 1f),      // snake - light green
-            new Color(241/255f, 35/255f, 52/255f, 1f),      // apple - apple red
-            new Color(1f, 211/255f, 25/255f, 1f),           // gold - banana yellow
-            new Color(173/255f, 110/255f, 11/255f, 1f),     // bad - brown
+            new Color(120/255f, 220/255f, 72/255f, 178/255f),   // bounds - lime green
+            new Color(57/255f, 198/255f, 13/255f, 1f),          // snake - green
+            new Color(238/255f, 35/255f, 47/255f, 1f),          // apple - apple red
+            new Color(252/255f, 231/255f, 87/255f, 1f),         // gold - banana yellow
+            new Color(103/255f, 73/255f, 75/255f, 1f),          // bad - weird purple
             StoreManager.ITEM_KEY_COLORS_PAS_FRU
         ),
         new ColorScheme(
             "Warm", // ID = 4
-            new Color(207/255f, 18/255f, 0f, 178/255f),     // bounds - dark red
-            new Color(1f, 23/255f, 15/255f, 1f),            // snake - red
-            new Color(248/255f, 130/255f, 0f, 1f),          // apple - orange
-            new Color(1f, 211/255f, 25/255f, 1f),           // gold - yellow
-            new Color(55/255f, 34/255f, 0f, 1f),            // bad - dark brown
+            new Color(1f, 205/255f, 116/255f, 178/255f),    // bounds - light orange-yellow
+            new Color(206/255f, 215/255f, 62/255f, 1f),     // snake - light green
+            new Color(226/255f, 78/255f, 48/255f, 1f),      // apple - red-orange
+            new Color(245/255f, 205/255f, 45/255f, 1f),     // gold - yellow
+            new Color(155/255f, 41/255f, 72/255f, 1f),      // bad - warm purple
             StoreManager.ITEM_KEY_COLORS_WAR_COO
         ),
         new ColorScheme(
             "Cool", // ID = 5
-            new Color(3/255f, 120/255f, 16/255f, 178/255f), // bounds - dark green
-            new Color(11/255f, 166/255f, 5/255f, 1f),       // snake - green
-            new Color(8/255f, 97/255f, 183/255f, 1f),       // apple - blue
-            new Color(138/255f, 43/255f, 195/255f, 1f),     // gold - purple
-            new Color(0f, 15/255f, 65/255f, 1f),            // bad - dark navy blue
+            new Color(41/255f, 106/255f, 142/255f, 178/255f),   // bounds - dark blue
+            new Color(0f, 168/255f, 107/255f, 1f),              // snake - green-blue
+            new Color(199/255f, 10/255f, 55/255f, 1f),          // apple - cool red
+            new Color(221/255f, 243/255f, 23/255f, 1f),         // gold - cool yellow
+            new Color(51/255f, 24/255f, 141/255f, 1f),          // bad - dark navy blue
             StoreManager.ITEM_KEY_COLORS_WAR_COO
         ),
         new ColorScheme(
@@ -85,7 +85,7 @@ public static class ColorSchemesManager {
             new Color(0f, 0f, 0f, 1f),                      // snake - black
             new Color(245/255f, 245/255f, 245/255f, 1f),    // apple - light gray
             new Color(1f, 1f, 1f, 1f),                      // gold - white
-            new Color(235/255f, 235/255f, 235/255f, 1f),    // bad - less light gray
+            new Color(230/255f, 230/255f, 230/255f, 1f),    // bad - less light gray
             StoreManager.ITEM_KEY_COLORS_MID_WHI
         ),
         new ColorScheme(
