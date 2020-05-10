@@ -8,15 +8,21 @@ using GoogleMobileAds.Api;
 public class GameEnder : StateChangeListener {
 
     private int score;
-    private int scoreBeforeRevive;
+    private int scoreBeforeRevive; // used when calculating the new average after a revived round
     private int highscore;
     private float averageScore;
     private int gold;
+    ///<summary>The amount of gold converted from apples that were collected in the previous round,
+    /// without the hard mode multiplier.</summary>
     private int goldFromApples;
     private int goldFromApplesBeforeRevive;
     private bool isHardMode;
+    ///<summary>One round goes from enabling the snake to disabling it.
+    /// Reviving counts as starting a new round.</summary>
     private int consecutiveRounds;
+    ///<summary>The number of consecutive revivals is capped at `MAX_CONSECUTIVE_REVIVALS`.</summary>
     private int consecutiveRevivals;
+    private static readonly int MAX_CONSECUTIVE_REVIVALS = 3;
 
     public Text endScoreLabel;
     public Text endHighscoreLabel;
@@ -26,7 +32,7 @@ public class GameEnder : StateChangeListener {
     public GameObject reviveButton;
     public Text reviveButtonLabel;
     public GameObject reviveWithAdButton;
-    public AudioManager audioManager;
+    public AudioManager audioManager; // need to pause music while an ad plays
 
     private bool shouldShowAds;
     private InterstitialAd interstitialAd;
@@ -39,6 +45,8 @@ public class GameEnder : StateChangeListener {
         // check if "no ads" is active
         this.shouldShowAds = (StoreManager.shouldShowAds() && IAPManager.shouldShowAds());
     }
+
+    // TODO: timer to prevent accidentally hitting a button right when it ends
 
     /* * * * StateChangeListener delegate * * * */
 
@@ -70,14 +78,12 @@ public class GameEnder : StateChangeListener {
         }
     }
 
-    ///<summary>Restart the game from the game over screen. This method is linked to a button on the canvas.</summary>
     public void restartAction() {
         this.consecutiveRounds++;
         this.consecutiveRevivals = 0;
         GameStateManager.onGameRestart();
     }
 
-    ///<summary>Quit the game from the game over screen. This method is linked to a button on the canvas.</summary>
     public void quitAction() {
         this.interstitialAd.Destroy();
         GameStateManager.quitGame();
@@ -85,6 +91,7 @@ public class GameEnder : StateChangeListener {
 
     /* * * * Private methods * * * */
 
+    ///<summary>Saves and displays statistics from the game, and shows revive buttons and interstitial ad if necessary.</summary>
     private void endGame() {
         //Debug.Log("endGame");
         this.updateAndSaveData();
@@ -93,6 +100,7 @@ public class GameEnder : StateChangeListener {
         this.showInterstitialAdIfNecessary();
     }
 
+    ///<summary>Calculates highscore, average, and gold earned, and writes the data.</summary>
     private void updateAndSaveData() {
         this.score = GameStateManager.getScore();
         this.highscore = DataAndSettingsManager.getHighscore();
@@ -142,7 +150,7 @@ public class GameEnder : StateChangeListener {
     }
 
     private void showReviveButtonsIfNecessary() {
-        bool canRevive = (this.consecutiveRevivals < 3 && GameStateManager.canRevive());
+        bool canRevive = (this.consecutiveRevivals < MAX_CONSECUTIVE_REVIVALS && GameStateManager.canRevive());
         if (canRevive) {
             int revivesLeft = DataAndSettingsManager.getNumBoughtForStoreItem(StoreManager.ITEM_KEY_EXTRA_LIFE);
             this.reviveButtonLabel.text = "Revive (" + revivesLeft + ")";
@@ -170,6 +178,11 @@ public class GameEnder : StateChangeListener {
 
     /* * * * Advertisements * * * */
 
+    public void loadAds() {
+        this.loadInterstitialAd();
+        this.loadRewardedAd();
+    }
+
     private void loadInterstitialAd() {
         //Debug.Log("loadInterstitialAd");
         #if UNITY_ANDROID
@@ -183,7 +196,7 @@ public class GameEnder : StateChangeListener {
         AdRequest request = new AdRequest.Builder().Build();
         this.interstitialAd.LoadAd(request);
 
-        // subscribe to event handlers that will pause/resume music
+        // subscribe event handlers that will pause/resume music
         this.interstitialAd.OnAdOpening += this.handleInterstitialAdShown;
         this.interstitialAd.OnAdClosed += this.handleInterstitialAdClosed;
     }
@@ -210,7 +223,7 @@ public class GameEnder : StateChangeListener {
         AdRequest request = new AdRequest.Builder().Build();
         this.rewardedAd.LoadAd(request);
 
-        // subscribe to event handlers that will pause/resume music and revive
+        // subscribe event handlers that will pause/resume music and revive
         this.rewardedAd.OnAdOpening += this.handleRewardedAdShown;
         this.rewardedAd.OnUserEarnedReward += this.handleRewardedAdEarnedReward;
         this.rewardedAd.OnAdClosed += this.handleRewardedAdClosed;
@@ -237,11 +250,6 @@ public class GameEnder : StateChangeListener {
     }
 
     /* * * * Helper methods * * * */
-
-    public void loadAds() {
-        this.loadInterstitialAd();
-        this.loadRewardedAd();
-    }
 
     private void pauseMusic() {
         this.audioManager.pauseMusic(AudioManager.MUSIC_BACKGROUND);

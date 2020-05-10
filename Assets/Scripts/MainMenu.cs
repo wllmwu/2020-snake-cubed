@@ -36,7 +36,6 @@ public class MainMenu : MonoBehaviour {
         DataAndSettingsManager.loadData();
     }
 
-    // Start is called before the first frame update
     void Start() {
         this.menuCubes = new List<GameObject>();
         this.openMainAction(); // switch to main panel
@@ -47,7 +46,6 @@ public class MainMenu : MonoBehaviour {
         MobileAds.Initialize(initStatus => {});
     }
 
-    // Update is called once per frame
     void Update() {
         this.moveCubes();
     }
@@ -65,7 +63,7 @@ public class MainMenu : MonoBehaviour {
 
     /* * * * UI actions * * * */
 
-    ///<summary>Changes the scene. This method is linked to the Play button on the canvas.</summary>
+    ///<summary>Changes the scene.</summary>
     public void playAction() {
         SceneManager.LoadSceneAsync("Scenes/ARScene", LoadSceneMode.Single);
     }
@@ -76,7 +74,6 @@ public class MainMenu : MonoBehaviour {
         this.mainPanel.SetActive(true);
     }
 
-    ///<summary>This method is linked to the Stats button on the canvas.</summary>
     public void openStatsAction() {
         this.deactivateAllPanels();
         this.updateStatsMenu();
@@ -89,13 +86,11 @@ public class MainMenu : MonoBehaviour {
         this.updateStatsMenu();
     }
 
-    ///<summary>This method is linked to the Store button on the canvas.</summary>
     public void openStoreAction() {
         this.deactivateAllPanels();
         this.storePanel.gameObject.SetActive(true);
     }
 
-    ///<summary>This method is linked to the Settings button on the canvas.</summary>
     public void openSettingsAction() {
         this.deactivateAllPanels();
         this.settingsPanel.SetActive(true);
@@ -106,6 +101,7 @@ public class MainMenu : MonoBehaviour {
         this.aboutPanel.SetActive(true);
     }
 
+    ///<summary>Asks the OS to open the link to ZapSplat.</summary>
     public void visitMusicLinkAction() {
         Application.OpenURL("https://www.zapsplat.com/");
     }
@@ -116,6 +112,7 @@ public class MainMenu : MonoBehaviour {
 
     /* * * * Animated background cubes * * * */
 
+    ///<summary>Randomly generates the background cubes.</summary>
     private void startMenuCubes() {
         int placement = 0, previousPlacement = 0;
         for (int i = 0; i < CUBE_START_DISTANCE * 2 + 1; i++) {
@@ -129,6 +126,7 @@ public class MainMenu : MonoBehaviour {
         }
     }
 
+    ///<summary>Sets the albedo color of the given cube's material to a random color.</summary>
     private void assignRandomColor(GameObject cube) {
         float r = Random.Range(0f, 1f);
         float g = Random.Range(0f, 1f);
@@ -137,6 +135,7 @@ public class MainMenu : MonoBehaviour {
         cube.GetComponent<Renderer>().material.color = color;
     }
 
+    ///<summary>Translates all the background cubes the appropriate distance. Should call this in `Update()`.</summary>
     private void moveCubes() {
         float dx = -CUBE_SIZE * Time.deltaTime / CUBE_TIME_INTERVAL;
         foreach (GameObject cube in this.menuCubes) {
@@ -158,6 +157,7 @@ public class MainMenu : MonoBehaviour {
         this.aboutPanel.SetActive(false);
     }
 
+    ///<summary>Updates the statistics display.</summary>
     private void updateStatsMenu() {
         this.statsGoldLabel.text = "" + DataAndSettingsManager.getGoldAmount();
         this.statsHighscoreLabel.text = "Highscore: " + DataAndSettingsManager.getHighscore();

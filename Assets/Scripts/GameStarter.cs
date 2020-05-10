@@ -34,7 +34,6 @@ public class GameStarter : StateChangeListener {
         this.potentialBoundingBox = Instantiate(this.potentialBoundingBoxPrefab);
     }
 
-    // Update is called once per frame
     void Update() {
         // move the potential bounding box around
         this.updatePotentialPlacement();
@@ -57,7 +56,7 @@ public class GameStarter : StateChangeListener {
     private void showHardModeToggleIfNecessary() {
         this.hardModeRect.SetActive(DataAndSettingsManager.getNumBoughtForStoreItem(StoreManager.ITEM_KEY_HARD_MODE) > 0);
         this.hardModeToggle.isOn = DataAndSettingsManager.getHardModeState();
-        if (this.hardModeRect.activeSelf) {
+        if (this.hardModeRect.activeSelf) { // need to adjust text position to make room for the toggle
             this.helpText.anchoredPosition = new Vector2(0f, 400f);
         }
         else {
@@ -67,21 +66,20 @@ public class GameStarter : StateChangeListener {
 
     /* * * * Setting game position * * * */
 
+    ///<summary>Projects a raycast from the center of the screen and moves the bounding box to where it hits.</summary>
     private void updatePotentialPlacement() {
-        // keep the potential bounding box in the center of the screen
         Vector3 screenCenter = Camera.main.ViewportToScreenPoint(new Vector3(0.5f, 0.5f));
         List<ARRaycastHit> hits = new List<ARRaycastHit>();
         this.arRaycaster.Raycast(screenCenter, hits, UnityEngine.XR.ARSubsystems.TrackableType.Planes); // looking for flat planes
 
         this.isValidPlacement = hits.Count > 0;
         if (this.isValidPlacement) {
-            // found a valid place to put the box
-            this.placementPose = hits[0].pose;
+            this.placementPose = hits[0].pose; // pose tracks position and rotation
 
             // keep the box facing the same direction relative to the camera
-            Vector3 cameraForward = Camera.main.transform.forward;
-            Vector3 cameraBearing = new Vector3(cameraForward.x, 0, cameraForward.z).normalized;
-            this.placementPose.rotation = Quaternion.LookRotation(cameraBearing);
+            Vector3 cameraForward = Camera.main.transform.forward; // orthogonal to the screen
+            Vector3 cameraBearing = new Vector3(cameraForward.x, 0, cameraForward.z).normalized; // project onto xz plane (horizontal)
+            this.placementPose.rotation = Quaternion.LookRotation(cameraBearing); // box "looks" in that direction
 
             this.potentialBoundingBox.SetActive(true);
             this.potentialBoundingBox.transform.SetPositionAndRotation(this.placementPose.position, this.placementPose.rotation);
@@ -104,7 +102,7 @@ public class GameStarter : StateChangeListener {
 
     public void setPositionAction() {
         if (this.isValidPlacement) {
-            // start the game
+            // calculate game origin position
             Transform boxTransform = this.potentialBoundingBox.transform;
             Vector3 offset = (-boxTransform.right * 0.45f) + (boxTransform.up * 0.05f) + (-boxTransform.forward * 0.45f);
             this.gameOrigin.transform.position = boxTransform.position + offset;

@@ -7,7 +7,6 @@ public class AlertPrompt : MonoBehaviour {
 
     public Text messageLabel;
 
-    // Start is called before the first frame update
     void Start() {
         this.closeAction();
     }

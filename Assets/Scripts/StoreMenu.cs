@@ -37,6 +37,8 @@ public class StoreMenu : MonoBehaviour {
 
     /* * * * Private methods * * * */
 
+    ///<summary>Populates the list of store items with `StoreListItem`s
+    /// and adjusts the heights of the content rects.</summary>
     private void setupList() {
         // expendables
         for (int i = 0; i < StoreManager.getNumExpendables(); i++) {
@@ -72,6 +74,8 @@ public class StoreMenu : MonoBehaviour {
         this.goldLabel.text = "" + DataAndSettingsManager.getGoldAmount();
     }
 
+    ///<summary>If `true` is passed, populates the IAP section with information from `IAPManager`.
+    /// If `false` is passed, displays a message.</summary>
     public void setupIAPSection(bool iapDidLoad) {
         if (iapDidLoad) {
             // populate IAP section

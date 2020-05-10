@@ -11,6 +11,7 @@ public class ColorSchemePicker : MonoBehaviour {
         this.setupList();
     }
 
+    ///<summary>Populates the list of color schemes with `ColorSchemePickerListItem`s.</summary>
     private void setupList() {
         int selectedID = DataAndSettingsManager.getColorSchemeID();
         for (int i = 0; i < ColorSchemesManager.getNumColorSchemes(); i++) {

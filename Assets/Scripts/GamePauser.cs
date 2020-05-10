@@ -25,7 +25,7 @@ public class GamePauser : StateChangeListener {
         }
     }
 
-    /* * * * Setting up the pause menu * * * */
+    /* * * * Private methods * * * */
 
     private void setup() {
         this.switchToPausedAction(); // set the correct panel active

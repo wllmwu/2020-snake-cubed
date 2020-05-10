@@ -4,6 +4,7 @@ using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour {
 
+    // keys for the Sound objects in the sounds array - should match what is set in the editor
     public static readonly string MUSIC_MENU = "menu";
     public static readonly string MUSIC_BACKGROUND = "background";
     public static readonly string SOUND_BUTTON = "button";
@@ -11,8 +12,8 @@ public class AudioManager : MonoBehaviour {
     public static readonly string SOUND_GOLD = "gold";
     public static readonly string SOUND_BAD = "bad";
 
-    public Sound[] sounds;
-    public bool isOnMenu;
+    public Sound[] sounds; // should be set in the editor
+    public bool isOnMenu; // determines what music to play/pause
 
     private bool musicEnabled;
     private bool soundsEnabled;
@@ -56,18 +57,21 @@ public class AudioManager : MonoBehaviour {
         this.soundsEnabled = isEnabled;
     }
 
+    ///<summary>`name` should be a `MUSIC_*` constant.</summary>
     public void playMusic(string name) {
         if (musicEnabled) {
             playAudio(name);
         }
     }
 
+    ///<summary>`name` should be a `SOUND_*` constant.</summary>
     public void playSound(string name) {
         if (soundsEnabled) {
             playAudio(name);
         }
     }
 
+    ///<summary>Convenience method - attach to buttons in the editor.</summary>
     public void playButtonSound() {
         this.playSound(SOUND_BUTTON);
     }
@@ -78,6 +82,7 @@ public class AudioManager : MonoBehaviour {
 
     /* * * * Private methods * * * */
 
+    ///<summary>Plays the given sound if it exists.</summary>
     private void playAudio(string name) {
         Sound s = this.findSound(name);
         if (s == null) {

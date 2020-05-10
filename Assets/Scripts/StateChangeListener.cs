@@ -11,7 +11,9 @@ public abstract class StateChangeListener : MonoBehaviour {
          * Instead, GameStateManager will unsubscribe all listeners upon a scene change. */
     }
 
-    ///<summary>The delegate method for `GameStateManager.OnGameStateChange`. Subclasses must override this method to set their `Component`'s enabled state and/or their `GameObject`'s active state appropriately.</summary>
+    ///<summary>The delegate method for `GameStateManager.OnGameStateChange`.
+    /// Subclasses must override this method to set their `Component`'s enabled state
+    /// and/or their `GameObject`'s active state appropriately.</summary>
     public abstract void respondToStateChange(GameState newState);
 
 }

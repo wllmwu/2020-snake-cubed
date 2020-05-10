@@ -19,20 +19,24 @@ public class Snake : MonoBehaviour {
         new int[3] { 0, 0, -1 } // -z
     };
 
-    public List<SnakeNode> nodes;
+    public List<SnakeNode> nodes; // default snake is set in the editor
     public SnakeNode snakeNodePrefab;
 
     private SnakeNode head;
     private SnakeNode tail;
     private int nextDirection;
-    private GameObject gameOrigin;
-    private SnakeNode ghostNode;
+    private GameObject gameOrigin; // used by nodes
+    private SnakeNode ghostNode; // for smooth movement
 
     /* * * * Public getters and setters * * * */
 
     public int getNextDirection() { return this.nextDirection; }
     public void setNextDirection(int direction) { this.nextDirection = direction; }
+
+    ///<summary>The nodes of the snake will use this origin to map their game coordinates to world coordinates.</summary>
     public void setGameOrigin(GameObject origin) { this.gameOrigin = origin; }
+
+    ///<summary>Pauses/unpauses each of the nodes in the snake.</summary>
     public void setPaused(bool paused) {
         this.ghostNode.setPaused(paused);
         foreach (SnakeNode node in this.nodes) {
@@ -62,7 +66,7 @@ public class Snake : MonoBehaviour {
     }
 
     void OnDestroy() {
-        // destroy nodes
+        // destroy all nodes
         Destroy(this.ghostNode.gameObject);
         foreach (SnakeNode node in this.nodes) {
             Destroy(node.gameObject);
@@ -71,18 +75,23 @@ public class Snake : MonoBehaviour {
 
     /* * * * Public methods * * * */
 
+    public int getLength() {
+        return this.nodes.Count;
+    }
+
+    public int[] getHeadCoordinates() {
+        return this.head.getCoordinates();
+    }
+
+    ///<summary>Returns the game coordinates of the space that the snake will move next.</summary>
     public int[] nextMove() {
         this.attemptDirectionChange(this.nextDirection); // change intended direction if necessary
         this.nextDirection = -1;
         return this.head.coordinatesOfNextNode();
     }
 
-    private void attemptDirectionChange(int newDirection) {
-        if (newDirection >= 0 && newDirection != this.head.getDirection() - 3 && newDirection != this.head.getDirection() + 3) {
-            this.head.setDirection(newDirection);
-        }
-    }
-
+    ///<summary>Moves the nodes of the snake for one turn, with animation if necessary.
+    /// Returns the game coordinates of the space just vacated (where the tail was before the move).</summary>
     public int[] move(float timeToMove, bool shouldMoveSmoothly) {
         int[] old = this.tail.getCoordinates();
         SnakeNode newTail = this.tail.getNodeBefore();
@@ -103,6 +112,7 @@ public class Snake : MonoBehaviour {
         return old;
     }
 
+    ///<summary>Adds a new node to the snake for one turn, with animation if necessary.</summary>
     public void grow(float timeToMove, bool shouldMoveSmoothly) {
         // like the move function, but instantiates a new node as the head instead of moving the tail up
         SnakeNode newHead = Instantiate(this.snakeNodePrefab, this.head.transform.position, this.head.transform.rotation, this.gameOrigin.transform) as SnakeNode;
@@ -116,12 +126,13 @@ public class Snake : MonoBehaviour {
         this.head = newHead;
     }
 
-    public int getLength() {
-        return this.nodes.Count;
-    }
+    /* * * * Helper methods * * * */
 
-    public int[] getHeadCoordinates() {
-        return this.head.getCoordinates();
+    ///<summary>Changes the snake's direction if allowed (not opposite to the current direction).</summary>
+    private void attemptDirectionChange(int newDirection) {
+        if (newDirection >= 0 && newDirection != this.head.getDirection() - 3 && newDirection != this.head.getDirection() + 3) {
+            this.head.setDirection(newDirection);
+        }
     }
 
 }

@@ -14,11 +14,16 @@ public class SnakeNode : Cube {
     public SnakeNode getNodeBefore() { return this.nodeBefore; }
     public void setPaused(bool paused) { this.isPaused = paused; }
 
+    ///<summary>Returns the game coordinates of the next node in the snake, which comes before this node.
+    /// If there is no next node (i.e. this node is the head), returns the game coordinates of the next move.</summary>
     public int[] coordinatesOfNextNode() {
         int[] offset = Snake.DIRECTION_COORDINATE_OFFSETS[this.direction];
         return new int[3] { this.getX() + offset[0], this.getY() + offset[1], this.getZ() + offset[2] };
     }
 
+    ///<summary>Moves this node to the provided game coordinates in `timeToMove` seconds.
+    /// If it should move smoothly, the motion is linearly interpolated.
+    /// If not, the position is set instantly, then the node waits until the time is up.</summary>
     public IEnumerator moveToCoordinates(int[] coordinates, float timeToMove, bool shouldMoveSmoothly) {
         int newX = coordinates[0];
         int newY = coordinates[1];

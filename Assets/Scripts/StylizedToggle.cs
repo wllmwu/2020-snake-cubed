@@ -12,11 +12,13 @@ public class StylizedToggle : MonoBehaviour {
         DataAndSettingsManager.OnToggleColorblindMode += this.setColorblindMode;
         this.setColorblindMode(DataAndSettingsManager.getColorblindModeState());
     }
+
     void OnDisable() {
         DataAndSettingsManager.OnToggleColorblindMode -= this.setColorblindMode;
     }
 
-    ///<summary>The delegate method for `DataAndSettingsManager.OnToggleColorblindMode`.</summary>
+    ///<summary>The delegate method for `DataAndSettingsManager.OnToggleColorblindMode`.
+    /// Sets the toggle's graphic accordingly.</summary>
     public void setColorblindMode(bool isOn) {
         Toggle toggle = GetComponent<Toggle>();
         if (toggle == null) { return; }

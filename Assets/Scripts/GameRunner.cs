@@ -15,8 +15,6 @@ public class GameRunner : StateChangeListener {
     private const int SIZE = 10;
     private int[,,] space = new int[SIZE,SIZE,SIZE];
 
-    private GameObject gameOrigin;
-
     public GameObject boundingBoxPrefab;
     public Snake snakePrefab;
     public Cube applePrefab;
@@ -28,22 +26,25 @@ public class GameRunner : StateChangeListener {
     public GameObject plusGoldPrefab;
     public GameObject minus2Prefab;
 
+    private GameObject gameOrigin;
     private GameObject boundingBox;
     private Snake snake;
-    private int score;
-    private int applesCollected;
-    private int goldAmount;
-    private bool isHardMode;
+
     private static readonly float DEFAULT_TIME_INTERVAL = 0.4f;
     private static readonly float SLOW_TIME_INTERVAL = 1f;
     private static readonly float FAST_TIME_INTERVAL = 0.25f;
+
+    private int score;
+    private int applesCollected; // gets converted to gold (handled by GameEnder)
+    private int goldAmount;
+    private bool isHardMode;
     private bool isPaused;
     private bool isReviving;
     private bool isTutorial;
     private Cube apple;
     private Cube gold;
     private List<Cube> bads;
-    private List<IEnumerator> badCoroutines;
+    private List<IEnumerator> badCoroutines; // keeps references to the coroutines so they can be stopped
 
     public GameObject mainCamera;
     public AlertPrompt tutorialAlertPanel;
@@ -71,6 +72,8 @@ public class GameRunner : StateChangeListener {
     public int getApples() { return this.applesCollected; }
     public int getGoldAmount() { return this.goldAmount; }
 
+    ///<summary>Returns whether there is at least one open direction that the snake can move.
+    /// If there is, randomly selects one and sets the snake's direction to it.</summary>
     public bool canRevive() {
         int[] headCoordinates = this.snake.getHeadCoordinates();
         int headX = headCoordinates[0], headY = headCoordinates[1], headZ = headCoordinates[2];
@@ -133,7 +136,7 @@ public class GameRunner : StateChangeListener {
 
     /* * * * Game pathway steps * * * */
 
-    ///<summary>Initializes the objects used by the game from their prefabs and the `space` 3D array and sets them up to begin the game, then activates the starting canvases.</summary>
+    ///<summary>Initializes objects, the game space array, and counters, flags, and labels.</summary>
     private void setupGame() {
         //Debug.Log("setup game");
         this.destroyObjects();
@@ -156,9 +159,7 @@ public class GameRunner : StateChangeListener {
         DataAndSettingsManager.updateColorblindModeListeners();
     }
 
-    ///<summary>Undoes the actions of `this.setupGame()` and reenables the GameStarter. This method is linked to a button on the canvas.</summary>
     public void changePositionAction() {
-        // undo the setup and go back to GameStarter
         this.destroyObjects();
         GameStateManager.onPositionCancel();
     }
@@ -171,6 +172,7 @@ public class GameRunner : StateChangeListener {
         StartCoroutine("runTutorial");
     }
 
+    ///<summary>Pauses the game to display tutorial messages at appropriate times.</summary>
     private IEnumerator runTutorial() {
         float timeToMove = this.timeInterval();
         yield return StartCoroutine(this.pausableWait(timeToMove * 1.5f));
@@ -183,9 +185,9 @@ public class GameRunner : StateChangeListener {
             "Swipe to continue!"));
         yield return StartCoroutine(this.pausableWait(timeToMove * 10));
         yield return StartCoroutine(this.displayTutorialMessage("Your goal is to eat as many apples (red cubes) as you can.\n\n" +
-            "Try to grab this apple\u2014swipe to continue!"));
+            "Try to grab this apple \u2014 swipe to continue!"));
         int s = this.score;
-        while (this.score == s) {
+        while (this.score == s) { // wait until the score changes, indicating the snake ate an apple
             yield return null;
         }
         yield return StartCoroutine(this.displayTutorialMessage("Nice! Apples and other things that appear will increase " +
@@ -196,6 +198,8 @@ public class GameRunner : StateChangeListener {
         yield break;
     }
 
+    ///<summary>Pauses the game internally (does not call `GameStateManager.OnGamePause()`),
+    /// displays the given message in the tutorial alert panel, and waits until the snake's direction changes.</summary>
     private IEnumerator displayTutorialMessage(string message) {
         this.isPaused = true;
         this.tutorialAlertPanel.showMessage(message);
@@ -213,6 +217,7 @@ public class GameRunner : StateChangeListener {
         StartCoroutine("reviveTutorial");
     }
 
+    ///<summary>Displays a message informing the user about running into things, then restarts the `runGame` coroutine.</summary>
     private IEnumerator reviveTutorial() {
         yield return StartCoroutine(this.displayTutorialMessage("Oh no, the snake hit something! This would normally end the game, " +
             "but in this tutorial, you may continue.\n\nSwipe to change direction and resume."));
@@ -220,6 +225,7 @@ public class GameRunner : StateChangeListener {
         yield break;
     }
 
+    ///<summary>Stops relevant coroutines and resets the game.</summary>
     public void quitTutorialAction() {
         StopCoroutine("runGame");
         StopCoroutine("runTutorial");
@@ -229,7 +235,7 @@ public class GameRunner : StateChangeListener {
         this.setupGame();
     }
 
-    ///<summary>Activates objects that should be active during the game and starts the game coroutines. This method is linked to a button on the canvas.</summary>
+    ///<summary>Starts relevant coroutines.</summary>
     public void actuallyStartGameAction() {
         //Debug.Log("actually start game");
         GameStateManager.onGameStart();
@@ -245,11 +251,10 @@ public class GameRunner : StateChangeListener {
 
     ///<summary>The main game coroutine - repeatedly moves the snake and checks for apples until the snake can't move.</summary>
     private IEnumerator runGame() {
-        // keep moving the snake and checking for apples until the snake hits the wall or itself
         int[] next = this.snake.nextMove();
         while (this.validMove(next)) {
             float timeToMove = this.timeInterval();
-            if (this.aboutToEatApple(next) && this.shouldGrow()) {
+            if (this.aboutToEatApple(next) && this.shouldGrow()) { // after a certain point, the snake shouldn't grow every time
                 this.snake.grow(timeToMove, DataAndSettingsManager.getSmoothMovementState());
             }
             else {
@@ -258,10 +263,11 @@ public class GameRunner : StateChangeListener {
             }
             yield return StartCoroutine(this.pausableWait(timeToMove)); // the player may pause during this time
 
-            this.lookForApples(next);
+            this.lookForApples(next); // by now, the snake has finished moving for the turn
             this.setValueAtCoordinates(next, SPACE_SNAKE);
             next = this.snake.nextMove();
         }
+    
         if (this.isTutorial) {
             this.stopTutorial();
         }
@@ -271,11 +277,11 @@ public class GameRunner : StateChangeListener {
         yield break;
     }
 
-    ///<summary>Pauses the game coroutines and switches the canvas. This method is linked to the pause button on the canvas.</summary>
     public void pauseAction() {
         GameStateManager.onGamePause();
     }
 
+    ///<summary>Stops the relevant coroutines.</summary>
     private void stopGame() {
         //Debug.Log("stop game");
         StopCoroutine("randomlyGenerateGold");
@@ -286,6 +292,7 @@ public class GameRunner : StateChangeListener {
         this.snake.enabled = false;
     }
 
+    ///<summary>Removes gold and bads, updates gold amount, and restarts the game.</summary>
     public void reviveGame() {
         //Debug.Log("revive game");
         this.removeGold();
@@ -303,18 +310,17 @@ public class GameRunner : StateChangeListener {
 
     private void initializeObjects() {
         //Debug.Log("initialize objects");
-        // all snake nodes and apples are children of the gameOrigin object so we can refer to their localPositions when moving them
+        // all snake nodes and apples are children of the gameOrigin object, so we can refer to their localPositions when moving them
         Transform originTransform = this.gameOrigin.transform;
         Vector3 originPosition = originTransform.position;
         Quaternion originRotation = originTransform.rotation;
 
-        // initialize a bunch of things
         Vector3 boxOffset = (originTransform.right * 0.45f) + (-originTransform.up * 0.05f) + (originTransform.forward * 0.45f);
         this.boundingBox = Instantiate(this.boundingBoxPrefab, originPosition + boxOffset, originRotation);
         this.snake = Instantiate(this.snakePrefab, originPosition, originRotation, originTransform) as Snake;
         this.snake.setGameOrigin(this.gameOrigin);
 
-        // these game objects will be reused repeatedly instead of recreated
+        // these objects will be reused repeatedly instead of recreated
         this.apple = Instantiate(this.applePrefab, originPosition + new Vector3(-1, -1, -1), originRotation, originTransform) as Cube;
         this.apple.gameObject.SetActive(false);
         this.gold = Instantiate(this.goldPrefab, originPosition + new Vector3(-1, -1, -1), originRotation, originTransform) as Cube;
@@ -394,29 +400,24 @@ public class GameRunner : StateChangeListener {
     private void destroyObjects() {
         //Debug.Log("destroy objects");
         if (this.gameOrigin.transform.childCount > 0) {
-            //Debug.Log("1");
             Destroy(this.boundingBox);
-            //Debug.Log("2");
             Destroy(this.snake); // calls the script's OnDestroy method, so it can destroy its child nodes
-            //Debug.Log("3");
             Destroy(this.snake.gameObject);
-            //Debug.Log("4");
             Destroy(this.apple.gameObject);
-            //Debug.Log("5");
             Destroy(this.gold.gameObject);
-            //Debug.Log("6");
             foreach (Cube bad in this.bads) {
                 Destroy(bad.gameObject);
-                //Debug.Log("7");
             }
-            this.bads.Clear();
-            this.badCoroutines.Clear();
+            this.bads.Clear(); // remove references to the scripts
+            this.badCoroutines.Clear(); // remove references to the coroutines
         }
     }
 
-    /* * * * Player controls * * * */
+    /* * * * Player control actions * * * */
 
-    ///<summary>Converts the angle of a swipe into a direction for the snake to move, then instructs the snake to change its direction. This method is triggered by Swipes' `swipeEvent`.</summary>
+    ///<summary>Converts the angle of a swipe into a direction for the snake to move,
+    /// then instructs the snake to change its direction.
+    /// Should set up in editor to handle `swipeEvent` from the Swipes class.</summary>
     public void handleSwipe(float angle) {
         int direction = this.directionCube.directionForSwipe(angle);
         if (GameStateManager.getCurrentState() == GameState.GameRunning && direction != -1) {
@@ -424,21 +425,21 @@ public class GameRunner : StateChangeListener {
         }
     }
 
-    ///<summary>Instructs the snake to change its direction to up. This method is linked to a button on the canvas.</summary>
+    ///<summary>Instructs the snake to change its direction to up.</summary>
     public void handleUp() {
         this.snake.setNextDirection(Snake.DIRECTION_POS_Y);
     }
 
-    ///<summary>Instructs the snake to change its direction to down. This method is linked to a button on the canvas.</summary>
+    ///<summary>Instructs the snake to change its direction to down.</summary>
     public void handleDown() {
         this.snake.setNextDirection(Snake.DIRECTION_NEG_Y);
     }
 
-    /* * * * Eating and animating feedback * * * */
+    /* * * * Eating apples and animating feedback * * * */
 
-    ///<summary>Checks for apples at the given coordinates. If there is anything there, it will be eaten and the score will be updated.</summary>
+    ///<summary>Checks for apple/gold/bad at the given game coordinates.
+    /// If anything is there, eats it and updates the score appropriately.</summary>
     private void lookForApples(int[] coordinates) {
-        // eat any apple/gold/bad that is there
         int value = this.valueAtCoordinates(coordinates);
         this.setValueAtCoordinates(coordinates, SPACE_EMPTY);
         if (value == SPACE_APPLE) {
@@ -457,7 +458,7 @@ public class GameRunner : StateChangeListener {
         }
         else if (value == SPACE_BAD) {
             Cube bad = null;
-            foreach (Cube b in this.bads) {
+            foreach (Cube b in this.bads) { // find which one in the list is at this space
                 if (b.getX() == coordinates[0] && b.getY() == coordinates[1] && b.getZ() == coordinates[2]) {
                     bad = b;
                     break;
@@ -497,6 +498,7 @@ public class GameRunner : StateChangeListener {
         }
     }
 
+    ///<summary>Slides the feedback object upward, then destroys it.</summary>
     private IEnumerator animatePointsFeedback(GameObject obj) {
         Vector3 currentPosition = obj.transform.position;
         Vector3 destination = currentPosition + new Vector3(0f, 0.08f, 0f);
@@ -514,7 +516,7 @@ public class GameRunner : StateChangeListener {
 
     /* * * * Helper methods * * * */
 
-    ///<param name="coordinates">An integer array containing, in order, the x, y, and z coordinates in game space to retrieve a value from.</param>
+    ///<summary>`coordinates` should contain the x, y, and z game coordinates in order.</summary>
     private int valueAtCoordinates(int[] coordinates) {
         return this.valueAtCoordinates(coordinates[0], coordinates[1], coordinates[2]);
     }
@@ -525,19 +527,20 @@ public class GameRunner : StateChangeListener {
         return 0;
     }
 
-    ///<param name="coordinates">An integer array containing, in order, the x, y, and z coordinates in game space to set a value at.</param>
-    ///<param name="value">The value to set - should be one of the SPACE constants.</param>
+    ///<summary>`coordinates` should contain the x, y, and z game coordinates in order.
+    /// `value` should be one of the SPACE_* constants.</summary>
     private void setValueAtCoordinates(int[] coordinates, int value) {
         this.setValueAtCoordinates(coordinates[0], coordinates[1], coordinates[2], value);
     }
+    ///<summary>`value` should be one of the SPACE_* constants.</summary>
     private void setValueAtCoordinates(int x, int y, int z, int value) {
         if (this.inBounds(x, y, z) && value >= SPACE_EMPTY && value <= SPACE_BAD) {
             this.space[x,y,z] = value;
         }
     }
 
-    ///<summary>Indicates whether the given coordinates are within the bounds of the game.</summary>
-    ///<param name="coordinates">An integer array containing, in order, the x, y, and z coordinates in game space to examine.</param>
+    ///<summary>Returns whether the given coordinates are within the bounds of the game.
+    /// `coordinates` should contain the x, y, and z game coordinates in order.</summary>
     private bool inBounds(int[] coordinates) {
         return this.inBounds(coordinates[0], coordinates[1], coordinates[2]);
     }
@@ -545,19 +548,26 @@ public class GameRunner : StateChangeListener {
         return x >= 0 && x < SIZE && y >= 0 && y < SIZE && z >= 0 && z < SIZE;
     }
 
+    ///<summary>Returns whether the given space is in bounds and does not contain the snake.
+    /// `nextMove` should contain the x, y, and z game coordinates in order.</summary>
     private bool validMove(int[] nextMove) {
         return this.inBounds(nextMove) && this.valueAtCoordinates(nextMove) != SPACE_SNAKE;
     }
 
+    ///<summary>Returns whether there is an apple at the given space.
+    /// `nextMove` should contain the x, y, and z game coordinates in order.</summary>
     private bool aboutToEatApple(int[] nextMove) {
         return this.valueAtCoordinates(nextMove) == SPACE_APPLE;
     }
 
+    ///<summary>Returns whether the snake should grow after eating an apple, according to the current length.
+    /// It will always grow until it reaches length 12, then will grow randomly until length 40.</summary>
     private bool shouldGrow() {
         int length = this.snake.getLength();
         return (length <= 12) || (Random.Range(1, 41) > length);
     }
 
+    ///<summary>Returns how long a turn should take based on the current state of the game.</summary>
     private float timeInterval() {
         if (this.isTutorial) {
             return DEFAULT_TIME_INTERVAL + 0.1f;
@@ -579,7 +589,8 @@ public class GameRunner : StateChangeListener {
         }
     }
 
-    ///<summary>A helper coroutine that functions the same as `yield return new WaitForSeconds(waitTime);`, but also respects the game's pause state. Usage: `yield return StartCoroutine(this.pausableWait(waitTime));`.</summary>
+    ///<summary>A helper coroutine that functions the same as `yield return new WaitForSeconds(waitTime);`,
+    /// but also respects the game's pause state. Usage: `yield return StartCoroutine(this.pausableWait(waitTime));`.</summary>
     private IEnumerator pausableWait(float waitTime) {
         float elapsedTime = 0f;
         while (elapsedTime < waitTime) {

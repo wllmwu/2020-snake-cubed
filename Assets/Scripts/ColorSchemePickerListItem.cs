@@ -10,7 +10,7 @@ public class ColorSchemePickerListItem : MonoBehaviour {
 
     public GameObject selectedIcon;
     public Text nameLabel;
-    public RawImage background;
+    public RawImage background; // the tint color of these RawImages will be set accordingly
     public RawImage snakeColorIcon;
     public RawImage appleColorIcon;
     public RawImage goldColorIcon;
@@ -26,7 +26,8 @@ public class ColorSchemePickerListItem : MonoBehaviour {
 
     void OnEnable() {
         OnSelectColorScheme += this.respondToOtherItemSelected;
-        if (this.isLocked) { // check if it should still be locked
+        if (this.isLocked) {
+            // check whether it should still be locked
             this.isLocked = (this.colorSchemeID > 1 && DataAndSettingsManager.getNumBoughtForStoreItem(this.packName) == 0);
             if (!this.isLocked) {
                 this.nameLabel.text = this.colorSchemeName;
@@ -54,7 +55,6 @@ public class ColorSchemePickerListItem : MonoBehaviour {
         }
     }
 
-    ///<summary>This method is linked to the list item's button.</summary>
     public void selectAction() {
         if (this.isLocked) { return; }
         if (OnSelectColorScheme != null) {
@@ -66,7 +66,7 @@ public class ColorSchemePickerListItem : MonoBehaviour {
         FindObjectOfType<AudioManager>().playButtonSound();
     }
 
-    ///<summary>The delegate method for OnSelectColorScheme.</summary>
+    ///<summary>The delegate method for OnSelectColorScheme. Deselects this list item.</summary>
     public void respondToOtherItemSelected() {
         this.setSelected(false);
     }
@@ -78,6 +78,7 @@ public class ColorSchemePickerListItem : MonoBehaviour {
         this.selectedIcon.SetActive(isSelected);
     }
 
+    ///<summary>Sets the tint colors of the icons according to the given color scheme.</summary>
     private void setColors(ColorScheme cs) {
         Color bg = cs.getBoundsColor();
         bg.a = 70/255f;

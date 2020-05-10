@@ -153,6 +153,7 @@ public static class ColorSchemesManager {
 
     /* * * * Helper methods * * * */
 
+    ///<summary>Sets the albedo colors of the `Material` objects to those of the given color scheme.</summary>
     private static void changeToScheme(ColorScheme colorScheme) {
         if (!hasLoadedMaterials) {
             loadMaterials();
@@ -161,6 +162,7 @@ public static class ColorSchemesManager {
         colorScheme.changeMaterialColors(boundsMaterial, snakeMaterial, appleMaterial, goldMaterial, badMaterial);
     }
 
+    ///<summary>Loads the `Material` objects from the Assets bundle.</summary>
     private static void loadMaterials() {
         boundsMaterial = Resources.Load<Material>("Materials/Bounding Box");
         snakeMaterial = Resources.Load<Material>("Materials/Snake");
@@ -176,7 +178,7 @@ public static class ColorSchemesManager {
 
 }
 
-///<summary>A class to represent a single color scheme.</summary>
+///<summary>A class that represents a single color scheme.</summary>
 [System.Serializable]
 public class ColorScheme {
 
@@ -184,6 +186,7 @@ public class ColorScheme {
     private string name;
     [SerializeField]
     private Color boundsColor, snakeColor, appleColor, goldColor, badColor;
+    ///<summary>The name of the colors pack that this color scheme is part of.</summary>
     private string pack;
 
     public ColorScheme(string name, Color bounds, Color snake, Color apple, Color gold, Color bad, string pack) {
@@ -204,7 +207,7 @@ public class ColorScheme {
     public Color getBadColor() { return this.badColor; }
     public string getPackName() { return this.pack; }
 
-    ///<summary>Sets the albedo colors of the given materials to the colors specified in this `ColorScheme`.</summary>
+    ///<summary>Sets the albedo colors of the given materials to the colors held by this `ColorScheme`.</summary>
     public void changeMaterialColors(Material bounds, Material snake, Material apple, Material gold, Material bad) {
         /*if (bounds == null) {
             //Debug.Log("bounds null");

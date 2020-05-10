@@ -21,16 +21,21 @@ public class IAPManager : MonoBehaviour, IStoreListener {
     public StoreMenu storeMenu;
 
     #if UNITY_IOS
+    ///<summary>The unified iOS app receipt for this app.
+    /// On iOS, receipts contain information about all purchases made by the user.
+    /// Should be in the Unity IAP receipt format (use `formatAppleReceiptForUnity()`).</summary>
     private static string appReceipt;
     #endif
 
     /* * * * Lifecycle methods * * * */
 
+    ///<summary>Initializes Unity IAP if it has not been already.</summary>
     void Start() {
         if (storeController == null) {
             this.initializePurchasing();
         }
         else {
+            // still need to tell the store menu that purchasing is ready
             this.storeMenu.setupIAPSection(true);
         }
     }
@@ -49,6 +54,7 @@ public class IAPManager : MonoBehaviour, IStoreListener {
         return storeController.products.WithID(productID);
     }
 
+    ///<summary>Initiates the purchase process with Unity IAP.</summary>
     public static void buyProduct(string productID) {
         if (storeIsInitialized()) {
             Product product = storeController.products.WithID(productID);
@@ -58,6 +64,7 @@ public class IAPManager : MonoBehaviour, IStoreListener {
         }
     }
 
+    ///<summary>Initiates the restoration process with Unity IAP's iOS extension.</summary>
     public static void restorePurchases() { // TODO: remove the button when building for non-iOS
         #if UNITY_IOS
         storeExtensionProvider.GetExtension<IAppleExtensions>().RestoreTransactions(result => {
@@ -79,7 +86,7 @@ public class IAPManager : MonoBehaviour, IStoreListener {
             #if UNITY_IOS
             return validateReceipt(appReceipt, productID);
             #elif UNITY_ANDROID
-            string receipt = storeController.products.WithID(productID).receipt;
+            string receipt = storeController.products.WithID(productID).receipt; // the receipt field is kept on Android, but not iOS
             return (!String.IsNullOrEmpty(receipt) && validateReceipt(receipt, productID));
             #else
             return storeController.products.WithID(productID).hasReceipt;
@@ -112,11 +119,11 @@ public class IAPManager : MonoBehaviour, IStoreListener {
         #endif
         builder.AddProduct(PRODUCT_ID_100_GOLD, ProductType.Consumable);
         builder.AddProduct(PRODUCT_ID_NO_ADS, ProductType.NonConsumable);
-        UnityPurchasing.Initialize(this, builder); // will receive a callback to either OnInitialized or OnInitializeFailed
+        UnityPurchasing.Initialize(this, builder); // will receive a callback to either OnInitialized() or OnInitializeFailed() below
     }
 
     ///<summary>Returns whether the given IAP receipt a) is a valid receipt and b) contains the given product ID.
-    /// The receipt string must be formatted as a Unity IAP receipt--use `formatReceiptForUnity()` if it is not.
+    /// The receipt string must be formatted as a Unity IAP receipt.
     /// IMPORTANT: Only call this method when running on iOS or Android. Otherwise, perhaps assume the receipt is valid.</summary>
     private static bool validateReceipt(string receipt, string intendedProductID) {
         var validator = new CrossPlatformValidator(GooglePlayTangle.Data(), AppleTangle.Data(), Application.identifier);
@@ -142,6 +149,7 @@ public class IAPManager : MonoBehaviour, IStoreListener {
         }
     }
 
+    ///<summary>Wraps the given receipt in a JSON string formatted according to the Unity manual.</summary>
     private static string formatAppleReceiptForUnity(string receipt) {
         return "{\"Store\":\"AppleAppStore\",\"Payload\":\"" + receipt + "\"}";
     }
@@ -149,7 +157,7 @@ public class IAPManager : MonoBehaviour, IStoreListener {
     /* * * * IStoreListener delegate methods * * * */
 
     public void OnInitialized(IStoreController controller, IExtensionProvider extensions) {
-        Debug.Log("iap initialized");
+        //Debug.Log("iap initialized");
         storeController = controller;
         storeExtensionProvider = extensions;
         this.storeMenu.setupIAPSection(true);
@@ -160,6 +168,7 @@ public class IAPManager : MonoBehaviour, IStoreListener {
         this.storeMenu.setupIAPSection(false);
     }
 
+    ///<summary>Called when Unity IAP successfully makes a purchase with the appropriate store.</summary>
     public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs args) {
         bool validPurchase = true;
         string purchasedProductID = args.purchasedProduct.definition.id;

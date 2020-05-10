@@ -23,12 +23,10 @@ public class SettingsMenu : MonoBehaviour {
 
     /* * * * UI actions * * * */
 
-    ///<summary>This method is linked to the Colorblind Mode settings toggle.</summary>
     public void toggleColorblindModeAction() {
         DataAndSettingsManager.setColorblindModeState(this.colorblindModeToggle.isOn);
     }
 
-    ///<summary>This method is linked to the Color Scheme button.</summary>
     public void openColorSchemeListAction() {
         this.settingsMenuPanel.SetActive(false);
         this.colorSchemePanel.SetActive(true);
@@ -40,18 +38,15 @@ public class SettingsMenu : MonoBehaviour {
         this.settingsMenuPanel.SetActive(true);
     }
 
-    ///<summary>This method is linked to the Smooth Movement settings toggle.</summary>
     public void toggleSmoothMovementAction() {
         DataAndSettingsManager.setSmoothMovementState(this.smoothMovementToggle.isOn);
     }
 
-    ///<summary>This method is linked to the Music settings toggle.</summary>
     public void toggleMusicAction() {
         DataAndSettingsManager.setMusicEnabledState(this.musicToggle.isOn);
         FindObjectOfType<AudioManager>().setMusicEnabled(this.musicToggle.isOn);
     }
 
-    ///<summary>This method is linked to the Sound Effects settings toggle.</summary>
     public void toggleSoundEffectsAction() {
         DataAndSettingsManager.setSoundsEnabledState(this.soundsToggle.isOn);
         FindObjectOfType<AudioManager>().setSoundsEnabled(this.soundsToggle.isOn);

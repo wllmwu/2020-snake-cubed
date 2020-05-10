@@ -7,13 +7,13 @@ using System.IO;
 
 public static class DataAndSettingsManager {
 
-    // player data
+    // player data keys - DO NOT CHANGE
     private static readonly string KEY_HIGHSCORE = "stats.highscore";
     private static readonly string KEY_AVERAGE_SCORE = "stats.average";
     private static readonly string KEY_GAMES_PLAYED = "stats.games";
     private static readonly string KEY_GOLD_AMOUNT = "stats.gold";
 
-    // settings
+    // settings keys - DO NOT CHANGE
     private static readonly string KEY_HARD_MODE = "settings.hardmode";
     private static readonly string KEY_COLORBLIND_MODE = "settings.colorblind";
     private static readonly string KEY_COLOR_SCHEME_ID = "settings.colorscheme";
@@ -22,12 +22,14 @@ public static class DataAndSettingsManager {
     private static readonly string KEY_MUSIC = "settings.music";
     private static readonly string KEY_SOUND_EFFECTS = "settings.sounds";
 
-    private static readonly string SAVE_PATH = "/save.dat";
+    private static readonly string SAVE_PATH = "/save.dat"; // DO NOT CHANGE
     private static Dictionary<string, int> intData = new Dictionary<string, int>();
     private static Dictionary<string, float> floatData = new Dictionary<string, float>();
     private static Dictionary<string, bool> boolData = new Dictionary<string, bool>();
     private static Dictionary<string, string> stringData = new Dictionary<string, string>();
+    ///<summary>Flag for whether data has been read from disk.</summary>
     private static bool didLoad;
+    ///<summary>Flag for whether any data has been changed since the last write to disk.</summary>
     private static bool changedSinceLastWrite;
 
     public delegate void SetColorblindMode(bool isOn);
@@ -72,14 +74,15 @@ public static class DataAndSettingsManager {
     public static void setNumBoughtForStoreItem(string itemKey, int numBought) { saveInt(itemKey, numBought); }
 
     public static DateTime getExpirationDateForStoreItem(string itemKey) {
-        return retrieveDate(itemKey + ".expire");
+        return retrieveDate(itemKey + ".expire"); // DO NOT CHANGE the key
     }
     public static void setExpirationDateForStoreItem(string itemKey, DateTime date) {
-        saveDate(itemKey + ".expire", date);
+        saveDate(itemKey + ".expire", date); // DO NOT CHANGE the key
     }
 
     /* * * * Public methods * * * */
 
+    ///<summary>Sets the average score and number of games played to 0.</summary>
     public static void resetAverageScore() {
         setAverageScore(0f);
         setGamesPlayed(0);
@@ -92,7 +95,7 @@ public static class DataAndSettingsManager {
             if (File.Exists(path)) {
                 BinaryFormatter formatter = new BinaryFormatter();
                 FileStream stream = new FileStream(path, FileMode.Open);
-                SaveData load = formatter.Deserialize(stream) as SaveData;
+                SaveData load = formatter.Deserialize(stream) as SaveData; // if the cast fails, then load is null
                 if (load != null) {
                     intData = load.getIntData();
                     floatData = load.getFloatData();
@@ -100,7 +103,7 @@ public static class DataAndSettingsManager {
                     stringData = load.getStringData();
                 }
                 stream.Close();
-                changedSinceLastWrite = false;
+                changedSinceLastWrite = false; // any previous data was overwritten
             }
         }
         didLoad = true;
@@ -156,6 +159,7 @@ public static class DataAndSettingsManager {
         triggerColorblindModeDelegate(getColorblindModeState());
     }
 
+    ///<summary>Triggers the `OnToggleColorblindMode` event and passes in `isOn`.</summary>
     private static void triggerColorblindModeDelegate(bool isOn) {
         if (OnToggleColorblindMode != null) {
             OnToggleColorblindMode(isOn);
@@ -166,7 +170,7 @@ public static class DataAndSettingsManager {
 
     private static int retrieveInt(string key, int defaultValue) {
         int value;
-        if (intData.TryGetValue(key, out value)) {
+        if (intData.TryGetValue(key, out value)) { // value will contain the corresponding value if true, or the default int value
             return value;
         }
         return defaultValue;
@@ -178,7 +182,7 @@ public static class DataAndSettingsManager {
 
     private static float retrieveFloat(string key, float defaultValue) {
         float value;
-        if (floatData.TryGetValue(key, out value)) {
+        if (floatData.TryGetValue(key, out value)) { // value will contain the corresponding value if true, or the default float value
             return value;
         }
         return defaultValue;
@@ -190,7 +194,7 @@ public static class DataAndSettingsManager {
 
     private static bool retrieveBool(string key, bool defaultValue) {
         bool value;
-        if (boolData.TryGetValue(key, out value)) {
+        if (boolData.TryGetValue(key, out value)) { // value will contain the corresponding value if true, or the default bool value
             return value;
         }
         return defaultValue;
@@ -212,7 +216,7 @@ public static class DataAndSettingsManager {
 
     private static string retrieveString(string key, string defaultValue) {
         string value;
-        if (stringData.TryGetValue(key, out value)) {
+        if (stringData.TryGetValue(key, out value)) { // value will contain the corresponding value if true, or the default string value
             return value;
         }
         return defaultValue;
@@ -224,6 +228,7 @@ public static class DataAndSettingsManager {
 
 }
 
+///<summary>Wrapper class for game data, to be serialized with BinaryFormatter.</summary>
 [System.Serializable]
 class SaveData {
 
